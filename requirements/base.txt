@@ -93,3 +93,7 @@ django-weasyprint==2.2.0
 
 # notifications
 django-notifications-hq==1.7.0
+
+django-user-agents==0.4.0
+ua-parser==0.10.0
+user-agents==2.2.0
