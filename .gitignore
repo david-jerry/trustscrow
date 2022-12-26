@@ -276,5 +276,5 @@ trustcrow/media/
 .envs/*
 !.envs/.local/
 .environ
-vendors
+frontend/vendors
 !build/vendors
