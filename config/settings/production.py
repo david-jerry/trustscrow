@@ -196,7 +196,7 @@ LOGGING = {
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-if PAYSTACK:
-    PAYSTACK_SK=env('PAYSTACK_LIVE_SK')
-    PAYSTACK_PK=env('PAYSTACK_LIVE_PK')
+if not PAYSTACK:
+    PAYSTACK_SECRET_KEY=env('PAYSTACK_LIVE_SK')
+    PAYSTACK_PUBLIC_KEY=env('PAYSTACK_LIVE_PK')
     PAYSTACK_CALLBACK_URL=env('PAYSTACK_CALLBACK_LIVE')
