@@ -14,7 +14,7 @@ except ImproperlyConfigured:
 try:
     ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(',')
 except ImproperlyConfigured:
-    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["trustscrow.com", '*.trustscrow.com'])
+    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["trustscrow.com", '*.trustscrow.com', '13.37.123.102'])
 
 # DATABASES
 # ------------------------------------------------------------------------------
