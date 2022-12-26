@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ block.super }} Contact Us
+{% endblock title %}
+
+{% block content %}
+<section class="w-screen py-24 justify-center items-center flex flex-col px-4 md:px-24">
+  <strong class="block text-center text-sm">Contact Us</strong>
+  <h1 class="font-bold text-xl md:text-4xl text-center">We would love to hear from you.</h1>
+  <div class="py-24 grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="text-center space-y-3">
+      <strong class="text-bold text-base">Support</strong>
+      <p class="block text-center text-sm">Our friendly team is here to help</p>
+      <p class="text-center text-primary block">support@trustscrow.com</p>
+    </div>
+    <div class="text-center space-y-3">
+      <strong class="text-bold text-base">Disputes</strong>
+      <p class="block text-center text-sm">Disputes and conflicts, get them resolved</p>
+      <p class="text-center text-primary block">disputes@trustscrow.com</p>
+    </div>
+    <div class="text-center space-y-3">
+      <strong class="text-bold text-base">Phone</strong>
+      <p class="block text-center text-sm">Mon - Fri from 8am - 6pm</p>
+      <p class="text-center text-primary block">+(234) 706 485 7582</p>
+    </div>
+  </div>
+
+
+</section>
+
+<section id="contact" class="w-full px-4 md:px-24 xl:px-44 md:max-w-6xl md:mx-auto">
+  <form action="{% url 'contact' %}" data-csrf="{{csrf_token}}" class="space-y-5 bg-white p-6 rounded-xl shadow-md" x-data="ContactForm" x-ref="contactForm" @submit.prevent="submitForm" method="POST">
+    {% csrf_token %}
+    <p class="text-center">We expect to hear from you soonest. As such we have created this form to espedite your enquiries thus making it easy to communicate your feelings and ideas directly to us.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="relative">
+        <input required type="text" name="name" id="id_name"
+          class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+          placeholder=" " />
+        <span id="error-wrapper-name" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+        <label for="id_name"
+          class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Name / Company Name</label>
+      </div>
+      <div class="relative">
+        <input required type="text" name="phone" id="id_phone"
+          class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+          placeholder=" " />
+        <span id="error-wrapper-phone" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+        <label for="id_phone"
+          class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Phone</label>
+      </div>
+      <div class="relative">
+        <input required type="email" name="email" id="id_email"
+          class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+          placeholder=" " />
+        <span id="error-wrapper-email" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+        <label for="id_email"
+          class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Email Address</label>
+      </div>
+    </div>
+    <div class="relative">
+      <textarea id="id_message" name="message" rows="4"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        placeholder=""></textarea>
+      <span id="error-wrapper-message"
+        class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+      <label for="id_message"
+        class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Message</label>
+    </div>
+    <button type="submit" class="btn-warning btn-rounded">Submit</button>
+  </form>
+</section>
+
+{% endblock content %}

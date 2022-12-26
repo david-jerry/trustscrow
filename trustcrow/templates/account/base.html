@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{% block head_title %}{% endblock head_title %}{% endblock title %}
+
+{% block content %}
+<div class="w-screen px-4 md:px-10 py-6 flex flex-col items-center justify-center h-[calc(100vh_-_128px)]">
+  <div class="md:max-w-2xl w-full bg-white rounded-xl p-6 shadow">
+    {% block inner %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

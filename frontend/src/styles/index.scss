@@ -1,0 +1,55 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+html {
+  scroll-behavior: smooth;
+}
+
+[x-cloak] {
+  display: none;
+}
+
+body {
+  @apply overflow-x-hidden overflow-y-auto bg-body text-black font-poppins scrollbar-hide w-screen scrollbar-track-warning scrollbar-thumb-black min-h-screen;
+}
+
+.dot-gray {
+  @apply rounded-full h-1 w-1 bg-gray-500;
+}
+
+.dot-warning {
+  @apply rounded-full h-1 w-1 bg-warning;
+}
+
+.dot-danger {
+  @apply rounded-full h-1 w-1 bg-danger;
+}
+
+.dot-black {
+  @apply rounded-full h-1 w-1 bg-black;
+}
+
+.btn-rounded {
+  @apply rounded-xl;
+}
+
+.btn-warning {
+  @apply px-3 md:px-6 py-3 hover:border-0 bg-warning hover:bg-warning/40 hover:text-black hover:shadow-md duration-300;
+}
+
+.btn-danger {
+  @apply px-3 md:px-6 py-3 hover:border-0 bg-danger hover:bg-danger/40 hover:text-white text-white hover:shadow-md duration-300;
+}
+
+.btn-black {
+  @apply px-3 md:px-6 py-3 border-2 border-black hover:border-0 hover:bg-black hover:text-white hover:shadow-md duration-300;
+}
+
+.btn-normal {
+  @apply px-3 md:px-6 py-3 text-black bg-light hover:bg-black hover:text-white hover:shadow-md duration-300;
+}
+
+.btn-primary {
+  @apply px-3 md:px-6 py-3 border-2 border-primary hover:border-0 hover:bg-primary hover:text-white hover:shadow-md duration-300;
+}

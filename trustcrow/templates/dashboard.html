@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }}{% endblock title %}
+{% block description %}{{ block.super }}{% endblock description %}
+{% block keywords %}{{ block.super }}{% endblock keywords %}
+{% block og_title %}{{block.super}}{% endblock og_title %}
+{% block og_sitename %}{{block.super}}{% endblock og_sitename %}
+{% block og_description %}{{block.super}}{% endblock og_description %}
+{% block og_favicon %}{{block.super}}{% endblock og_favicon %}
+
+{% block nav %}{% endblock nav %}
+
+{% block main %}
+<section class="w-screen h-screen max-h-screen flex items-start flex-none overflow-hidden">
+  {% include "snippets/sidebar.html" %}
+
+  <div class="md:ml-72 w-full md:w-[calc(100vw_-_288px)] bg-gray-200 md:fixed top-0 right-0 h-screen max-h-[100vh] flex-col flex overflow-y-auto scrollbar-thin scrollbar-thumb-warning scrollbar-track-light pb-24 md:pb-0">
+    {% include "snippets/navbar2.html" %}
+    <main id="main" class="w-full z-0">
+      <section class="hidden md:block shadow-md w-full p-4 md:px-10 md:py-4 bg-white text-gray-800 mb-10">
+        <strong class="font-bold text-base md:text-xl block">{% if hour >= 12 and hour < 16 %}Good Afternoon{% elif hour >= 16 and hour < 21 %}Good Evening{% elif hour >= 21 and hour < 24 %}Good Night{% elif hour >= 0 and hour < 12 %}Good Morning{% elif hour %}{{hour}}{% endif %}, {{request.user.username|title}}</strong>
+        <p class="block text-sm">Welcome Back 🤭 </p>
+      </section>
+
+      {% block records %}
+      {% if request.user.vendor %}
+      <section class="w-full p-4 md:px-10 grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+        <div class="overflow-hidden w-full rounded-xl shadow-sm hover:shadow-lg cursor-pointer duration-300 bg-gray-200 px-4 relative py-4 md:py-8">
+          <strong class="text-sm md:text-sm font-semibold flex text-gray-500">Current Holdings</strong>
+          <div class="flex items-start space-x-6 justify-between z-30 relative">
+            <div class="max-w-1/2 space-y-3">
+              <strong class="font-black text-2xl block"><span class="text-s">₦</span> {{request.user.wallet.balance}}</strong>
+              <span class="text-gray-500 text-s space-x-2 flex items-center"><span class="block">Growth</span> <span class="block text-base text-success">{{request.user.wallet.p_increase}}%</span></span>
+            </div>
+          </div>
+          <div class="absolute right-0 bottom-0 overflow-hidden h-44 md:h-24 z-0 pl-6 opacity-10 md:opacity-100">
+            <img src="{% static 'vendors/images/patterns/Savings-bro.svg' %}" alt="Balance" class="h-full object-cover overflow-hidden">
+          </div>
+        </div>
+        <div class="overflow-hidden w-full rounded-xl shadow-sm hover:shadow-lg cursor-pointer duration-300 bg-gray-200 px-4 relative py-4 md:py-8">
+          <strong class="text-sm md:text-sm font-semibold flex text-gray-500">USDT Balance</strong>
+          <div class="flex items-start space-x-6 justify-between z-30 relative">
+            <div class="max-w-1/2 space-y-3">
+              <strong class="font-black text-2xl block"><span class="text-s">USDT</span> <span>{{request.user.wallet_address.balance}}</span></strong>
+              <span class="text-gray-500 text-s space-x-2 flex items-center"><span class="block">Address</span> <span class="block {% if not request.user.wallet_address.address %}text-s font-bold  text-danger{% else %}text-base text-primary{% endif %}">{% if request.user.wallet_address.address %}{{request.user.wallet_address.address}}{% else %}UNCONNECTED{% endif %}</span></span>
+            </div>
+          </div>
+          <div class="absolute right-0 bottom-0 overflow-hidden h-44 md:h-24 z-0 pl-6 opacity-10 md:opacity-100">
+            <img src="{% static 'vendors/images/patterns/usdt.svg' %}" alt="USDT" class="h-full object-cover overflow-hidden">
+          </div>
+        </div>
+        <div class="overflow-hidden w-full rounded-xl shadow-sm hover:shadow-lg cursor-pointer duration-300 bg-gray-200 px-4 relative py-4 md:py-8">
+          <strong class="text-sm md:text-sm font-semibold flex text-gray-500">Total Earning</strong>
+          <div class="flex items-start space-x-6 justify-between z-30 relative">
+            <div class="max-w-1/2 space-y-3">
+              <strong class="font-black text-2xl block"><span class="text-s">₦</span> {{request.user.total_earnings|floatformat:2}}</strong>
+              <span class="text-gray-500 text-s space-x-2 flex items-center"><span class="block">Withdrawn</span> <span class="block text-base text-black">₦ {{request.user.wallet.withdrawn|floatformat:2}}</span></span>
+            </div>
+          </div>
+          <div class="absolute right-0 bottom-0 overflow-hidden h-44 md:h-24 z-0 pl-6 opacity-10 md:opacity-100">
+            <img src="{% static 'vendors/images/patterns/earning.svg' %}" alt="Earning" class="h-full object-cover overflow-hidden">
+          </div>
+        </div>
+        <div class="overflow-hidden w-full rounded-xl shadow-sm hover:shadow-lg cursor-pointer duration-300 bg-gray-200 px-4 relative py-4 md:py-8">
+          <strong class="text-sm md:text-sm font-semibold flex text-gray-500">Active Contracts</strong>
+          <div class="flex items-start space-x-6 justify-between z-30 relative">
+            <div class="max-w-1/2 space-y-3">
+              <strong class="font-black text-2xl block">{{request.user.total_active_contracts}}</strong>
+              <span class="text-gray-500 text-s space-x-2 flex items-center"><span class="block">All Contracts</span> <span class="block text-base text-black">{{request.user.total_contracts}}</span></span>
+            </div>
+          </div>
+          <div class="absolute right-0 bottom-0 overflow-hidden h-44 md:h-24 z-0 pl-6 opacity-10 md:opacity-100">
+            <img src="{% static 'vendors/images/patterns/contracts.svg' %}" alt="Contracts" class="h-full object-cover overflow-hidden">
+          </div>
+        </div>
+      </section>
+      {% endif %}
+      {% endblock records %}
+
+      {% block content %}
+
+      {% endblock content %}
+    </main>
+  </div>
+</section>
+{% endblock main %}
+
+{% block modal %}{% endblock modal %}
+
+{% block footer %}{% endblock footer %}
+{% block totop %}{{ block.super }}{% endblock totop %}
+{% block share %}{{ block.super }}{% endblock share %}

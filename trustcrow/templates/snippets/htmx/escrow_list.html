@@ -1,0 +1,59 @@
+{% load humanize %}
+
+{% for c in objects %}
+{% if forloop.last and page_obj.has_next %}
+<div class="p-0 text-gray-800" hx-get="{% url 'escrow:list_contracts' %}?page={{ page_obj.number|add:1 }}" hx-swap="afterend" hx-trigger="revealed" hx-target="this" x-show.transition.in="filter == {% if c.complete %}1{% elif not c.complete %}2{% endif %} || filter == 0">
+{% else %}
+<div class="p-0 text-gray-800" x-show.transition.in="filter == {% if c.complete %}1{% elif not c.complete %}2{% endif %} || filter == 0">
+{% endif %}
+  <a href="{{c.get_absolute_url}}" class="{% if not forloop.last %}mb-3{% endif %} duration-300 bg-gray-100 p-3 rounded-xl hover:shadow-md block divide-y-[0.75px] divide-gray-200 space-y-4">
+    <div class="flex items-start justify-between">
+      <div class="font-bold text-base flex items-center space-x-3">
+        {% if c.contract_type == c.SERVICE %}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none md:w-8 md:h-8 text-warning">
+          <path fill-rule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+          <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
+        </svg>
+        {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none md:w-8 md:h-8 text-primary">
+          <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+          <path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+        </svg>
+        {% endif %}
+        <div class="space-y-0">
+          <strong class="block">{% if c.vendor.profile.company_name %}{{c.vendor.profile.company_name|title}}{% else %}{{c.vendor|title}}{% endif %}</strong>
+          <p class="text-sm font-normal">{% if c.contract_order.delivery_location %}{{c.contract_order.delivery_location.delivery_to|title}}{% else %}Nigeria{% endif %}</p>
+        </div>
+      </div>
+
+      <div class="space-y-1 text-right">
+        <span class="block font-black text-primary">₦{% if c.total_cost %}{{c.total_cost|floatformat:2|intcomma}}{% else %}{{c.contract_amount|floatformat:2|intcomma}}{% endif %}</span>
+        <span class="block font-bold text-s {% if not c.contract_paid %}text-danger{% else %}text-success{% endif %}">{% if not c.contract_paid %}UNPAID{% else %}PAID{% endif %}</span>
+      </div>
+    </div>
+
+    <div class="pt-4 flex items-start justify-between">
+      <div class="space-y-0">
+        <strong class="text-gray-400 text-sm text-left block">Contract Brief</strong>
+        <div class="text-gray-500 text-s flex items-center space-x-1"><span class="block">{{c.contract_type}}</span> <div class="dot-gray"></div><span class="block font-bold text-primary">{% if not c.approved %}UNAPPROVED{% else %}APPROVED{% endif %}</span></div>
+        <div class="flex items-center justify-between space-x-4">
+          {% if c.contract_type == c.SERVICE %}
+          <div class="flex items-center space-x-2 text-s"> <strong class="font-bold">{{c.get_complete_milestones_count}}</strong> <span>of</span> <span class="block font-bold">{{c.get_milestones_count}}</span> <span class="block font-bold">Milestones Completed</span></div>
+          {% else %}
+          <div class="flex items-center space-x-2 text-s"><span class="block">{{c.get_products_count}}</span> <span class="block font-bold">Products Item</span></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="space-y-0 text-right">
+        <strong class="text-gray-400 text-sm text-right block">Name of Client</strong>
+        <p class="block font-bold text-base">{{c.buyer|title}}</p>
+      </div>
+    </div>
+  </a>
+</div>
+{% empty %}
+<div class="col-span-4 rounded-xl shadow-xl bg-white text-gray-800 py-8 text-center space-y-3">
+  <p class="text-base text-gray-400 block">No Contract Matching or Created Yet</p>
+  <a href="" class="btn-warning uppercase btn-rounded block w-fit mx-auto text-sm">Create Contract</a>
+</div>
+{% endfor %}

@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=trustcrow
+POSTGRES_USER=YoYiYorlnlUyoEbPPxeZBztJJjCDkCcx
+POSTGRES_PASSWORD=K9M2ZPzZFNng6jOUgVOVIsVly1sPLRDgQBNR5yiEA8jam73rwyWx27o1ZY6cIkL1

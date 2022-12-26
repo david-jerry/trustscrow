@@ -1,0 +1,122 @@
+{% extends "dashboard.html" %}
+{% load crispy_forms_tags static %}
+
+{% block title %}
+{{ block.super }} {{object.username}} Profile
+{% endblock title %}
+
+{% block content %}
+<section class="space-y-4 p-4 md:px-10 md:py-8 min-h-[calc(100vh_-_14rem)] w-full">
+  <form action="{% url 'users:update' %}"
+    class="space-y-4  bg-white rounded-xl shadow-xl p-6 flex flex-col items-start justify-center w-full">
+    <div class="md:flex md:items-start md:space-x-4 w-full md:space-y-0 space-y-4">
+      <div class="flex-none">
+        <div class="w-full aspect-1 md:w-32 md:h-32 mb-1 border rounded-lg overflow-hidden relative bg-gray-100">
+          <img id="imageI" class="object-cover w-full h-32" src="{% if request.user.image %}{{request.user.image.url}}{% else %}https://placehold.co/300x300/e2e8f0/e2e8f0{% endif %}" />
+
+          <div
+            class="absolute top-0 left-0 right-0 bottom-0 w-full block cursor-pointer flex items-center justify-center"
+            onClick="document.getElementById('fileInputI').click()">
+            <button type="button" style="background-color: rgba(255, 255, 255, 0.65)"
+              class="hover:bg-gray-100 text-gray-700 font-semibold py-2 px-4 text-sm border border-gray-300 rounded-lg shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-camera" width="24" height="24"
+                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                <path
+                  d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                <circle cx="12" cy="13" r="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <input name="img1" id="fileInputI" value="{% if request.user.image %}{{request.user.image.url}}{% endif %}" accept="image/*" class="hidden" type="file" onChange="
+              let fileI = this.files[0];
+              var reader = new FileReader();
+
+              reader.onload = function (e) {
+              document.getElementById('imageI').src = e.target.result;
+              document.getElementById('image2').src = e.target.result;
+              };
+
+              reader.readAsDataURL(fileI);
+          ">
+      </div>
+      <div class="space-y-3 w-full">
+        <h3 class="text-base font-bold">Authentication Information</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+          <div class="relative">
+              <input type="text" value="{{user.name}}" name="name" id="id_name" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">User Name</label>
+          </div>
+          <div class="relative w-full">
+              <input type="email" value="{{user.email}}" name="email" id="id_email" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_email" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">User Email</label>
+          </div>
+          {% if not user.vendor %}
+          <div class="relative w-full">
+            <input type="text" value="{{user.reg_no}}" name="reg_no" id="id_reg_no" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+            <label for="id_reg_no" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company RC No</label>
+          </div>
+          {% endif %}
+        </div>
+        <div class="py-4 space-y-3 w-full">
+          <h3 class="text-base font-bold">Contact Information</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="relative">
+              <input type="text" value="{{user.phone}}" name="phone" id="id_phone" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_phone" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">User Phone</label>
+            </div>
+            <div class="relative w-full">
+              <input type="text" value="{{user.address}}" name="address" id="id_address" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_address" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">User Address</label>
+            </div>
+          </div>
+        </div>
+        {% if not user.vendor %}
+        <div class="py-4 space-y-3 w-full">
+          <h3 class="text-base font-bold">Company Information</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="relative">
+              <input type="text" value="{{user.company_name}}" name="company_name" id="id_company_name" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company/Vendor Name</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_tagline}}" name="company_tagline" id="id_company_tagline" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_tagline" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Tagline</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_reg_no}}" name="company_reg_no" id="id_company_reg_no" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_reg_no" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company RC No</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_rep}}" name="company_rep" id="id_company_rep" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_rep" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Representative's Name</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_website}}" name="company_website" id="id_company_website" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_website" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Website</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_address}}" name="company_address" id="id_company_address" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_address" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Address</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_phone_I}}" name="company_phone_I" id="id_company_phone_I" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_phone_I" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Mobile</label>
+            </div>
+            <div class="relative">
+              <input type="text" value="{{user.company_phone_II}}" name="company_phone_II" id="id_company_phone_II" required class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer">
+              <label for="id_company_phone_II" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Company Mobile II</label>
+            </div>
+
+            <button type="submit" class="rounded-xl font-bold py-3 px-5 w-full text-center bg-warning text-gray-700 uppercase">Update</button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </form>
+</section>
+{% endblock %}

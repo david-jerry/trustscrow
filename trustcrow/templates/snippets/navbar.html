@@ -1,0 +1,154 @@
+{% load static %}
+{% load notifications_tags humanize %}
+
+<header x-transition.duration.500ms id="navbar" :class="{'z-40 fixed duration-300 top-0 left-0 shadow-xl bg-white/70' : showNav, 'z-20 relative bg-white/40' : !showNav}" class="z-50 w-full backdrop-blur-md flex-none py-4 px-4 md:px-24 xl:px-44 flex items-center justify-between">
+  <div class="flex space-x-14 items-center">
+    <a href="{% url 'home' %}" class="flex items-center space-x-1">
+      <img src="{% static 'vendors/images/logo.png' %}" alt="Trustscrow Logo" class="h-10 object-fit">
+      <strong class="hidden md:flex text-2xl font-normal uppercase"><span
+          class="text-warning font-bold">trust</span>scrow</strong>
+    </a>
+    <nav class="hidden md:flex items-center space-x-8 text-debug text-sm">
+      <a href="{% url 'home' %}#how"
+        class="space-y-3 font-semibold hover:text-black hover:text-bold duration-300 group flex flex-col items-center">
+        <span class="block">How it works</span>
+        <div class="h-[1.75px] group-hover:w-full w-0 duration-300 bg-debug"></div>
+      </a>
+
+      <!-- <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="space-y-3 font-semibold hover:text-black hover:text-bold duration-300 group flex flex-col items-center">
+        <div class="space-x-4 flex items-center">
+          <span class="block">Products</span>
+          <svg class="ml-2 w-4 h-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+        <div class="h-[1.75px] group-hover:w-full w-0 duration-300 bg-debug"></div>
+      </button>
+      <div id="dropdown" class="hidden z-50 min-w-44 bg-white rounded divide-y divide-debug/40 shadow-xl">
+        <div class="max-w-xl mx-auto text-sm">
+          <ul aria-labelledby="dropdownDefault" class="space-x-4 grid grid-cols-1 md:grid-cols-2 gap-6 flex items-center p-4">
+            <a href="" class="flex p-2 duration-300 hover:scale-105 items-center space-x-4">
+              <img src="{% static 'vendors/images/icons/trustpay.png' %}" alt="trustpay icon" class="h-12 block">
+              <div class="flex flex-col space-y-1">
+                <strong class="text-lg block text-black">Trustpay</strong>
+                <p class="text-sm text-debug">Quickly generate links to receive financial support from your customers</p>
+              </div>
+            </a>
+            <a href="" class="flex p-2 duration-300 hover:scale-105 items-center space-x-4">
+              <img src="{% static 'vendors/images/icons/vendfy.png' %}" alt="vendify icon" class="h-12 block">
+              <div class="flex flex-col space-y-1">
+                <strong class="text-lg block text-black">Vendify</strong>
+                <p class="text-sm text-debug">As a vendor get verfied so as to build credibility with your customers</p>
+              </div>
+            </a>
+          </ul>
+        </div>
+      </div> -->
+
+
+      <a href="{% url 'contact' %}" class="space-y-3 font-semibold hover:text-black hover:text-bold duration-300 group flex flex-col items-center">
+        <span class="block">Support</span>
+        <div class="h-[1.75px] group-hover:w-full w-0 duration-300 bg-debug"></div>
+      </a>
+      <!-- <a href="" class="space-y-3 font-semibold hover:text-black hover:text-bold duration-300 group flex flex-col items-center">
+        <span class="block">Blog</span>
+        <div class="h-[1.75px] group-hover:w-full w-0 duration-300 bg-debug"></div>
+      </a> -->
+    </nav>
+  </div>
+
+  <div class="flex items-center space-x-3 md:space-x-6 font-semibold text-sm">
+    {% if request.user.is_authenticated %}
+    <button id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification"
+      class=" btn-rounded inline-flex items-center text-sm font-medium text-center text-gray-500 hover:text-gray-900 focus:outline-none dark:hover:text-white dark:text-gray-400"
+      type="button">
+      <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z">
+        </path>
+      </svg>
+      <div class="flex relative">
+        {% live_notify_badge  as notify_count %}
+        <div class="inline-flex relative -top-2 right-3 max-w-3 max-h-3 flex items-center justify-center bg-red-500 rounded-full border-2 border-white dark:border-gray-900 p-2 text-white">
+          <span class="block">{% if notify_count %}{{notify_count}}{% else %}0{% endif %}</span>
+        </div>
+      </div>
+    </button>
+    <!-- Dropdown menu -->
+    <div id="dropdownNotification"
+      class=" btn-rounded hidden z-20 w-full max-w-sm bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-800 dark:divide-gray-700"
+      aria-labelledby="dropdownNotificationButton">
+      <div class="flex items-center justify-between block py-2 px-4 font-medium text-center text-gray-700 bg-gray-50 dark:bg-gray-800 dark:text-white">
+        <strong class="font-bold block">Notifications</strong>
+        <button type="button" @click="markAllRead" class="cursor-pointer block text-success text-sm">Mark All Read</button>
+      </div>
+      <div id="notifications-table" class="divide-y divide-gray-100 dark:divide-gray-700">
+        {% for notify in user.notifications.unread %}
+        <button type="button" @click="markRead({{notify.id}})" class="flex py-3 px-4 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <div class="flex-shrink-0">
+            <!-- <img class="w-11 h-11 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Jese image"> -->
+            <div
+              class="flex absolute justify-center items-center ml-6 -mt-5 w-5 h-5 bg-blue-600 rounded-full border border-white dark:border-gray-800">
+              <svg class="w-3 h-3 text-white" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
+                </path>
+                <path
+                  d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
+                </path>
+              </svg>
+            </div>
+          </div>
+          <div class="pl-3 w-full">
+            <div class="text-gray-500 text-sm mb-1.5 dark:text-gray-400">New message from <span
+                class="font-semibold text-xs">{{notify.actor}}</span>: "{{notify.description}}"</div>
+            <div class="text-xs text-blue-600 dark:text-blue-500">{{notify.timestamp|naturaltime}}</div>
+          </div>
+        </button>
+        {% empty %}
+        <div class="bg-body text-debug text-sm py-3 px-6 rounded-md">No Notification Available</div>
+        {% endfor %}
+      </div>
+
+      <!-- view all notification button -->
+      <button type="button" @click="drawer = !drawer" @click.outside="drawer = false" class=" btn-rounded w-full text-center flex items-center space-x-2 justify-center block py-2 text-sm font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white px-auto">
+        <svg class="mr-2 w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" fill="currentColor"
+          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+          <path fill-rule="evenodd"
+            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+            clip-rule="evenodd"></path>
+        </svg>
+        <span class="block">View all</span>
+      </button>
+
+
+    </div>
+    <a href="{% url 'users:detail' user.username %}" class="hidden btn-rounded btn-warning flex-none md:flex items-center md:space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+      </svg>
+      <span class="md:block hidden">Dashboard</span>
+    </a>
+    <a href="{% url 'account_logout' %}" class="hidden btn-rounded btn-black flex-none md:flex md:items-center md:space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+      </svg>
+      <span class="md:block hidden">Logout</span>
+    </a>
+    {% else %}
+    <a href="{% url 'account_login' %}" class="hidden btn-rounded btn-normal md:flex-none flex items-center md:space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+      </svg>
+      <span class="md:block hidden">Login</span>
+    </a>
+    <a href="{% url 'account_signup' %}" class="btn-rounded btn-warning flex-none flex items-center md:space-x-2">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+        <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
+      </svg>
+      <span class="md:block hidden">Get Started</span>
+    </a>
+    {% endif %}
+  </div>
+</header>

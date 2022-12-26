@@ -1,0 +1,177 @@
+{% extends "dashboard.html" %}
+{% load static humanize %}
+
+{% block title %}
+{{ block.super }} {{object.username}} Profile
+{% endblock title %}
+
+{% block content %}
+{% comment %}
+<!-- <div class="container">
+
+  <div class="row">
+    <div class="col-sm-12">
+
+      <h2>{{ object.username }}</h2>
+      {% if object.name %}
+        <p>{{ object.name }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+{% if object == object %}
+<!-- Action buttons -->
+<div class="row">
+
+  <div class="col-sm-12">
+    <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
+    <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
+    <!-- Your Stuff: Custom user template urls -->
+  </div>
+
+</div>
+<!-- End Action buttons -->
+{% endif %}
+
+</div> -->
+{% endcomment %}
+
+<section class="w-full grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-14 p-4 md:px-10 md:py-8">
+  <div class="w-full space-y-4 md:space-y-8">
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block">Active Contracts</strong> <a href="{% url 'escrow:list_contracts' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <div class="w-full btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md">
+      {% for c in object.all_active_contracts|slice:":3" %}
+      <a href="{{c.get_absolute_url}}" class="{% if not forloop.last %}mb-3{% endif %} duration-300 bg-gray-100 p-3 rounded-xl hover:shadow-md block divide-y-[0.75px] divide-gray-200 space-y-4">
+        <div class="flex items-start justify-between">
+          <div class="font-bold text-base flex items-center space-x-3">
+            {% if c.contract_type == c.SERVICE %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none md:w-8 md:h-8 text-warning">
+              <path fill-rule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+              <path d="M3 18.4v-2.796a4.3 4.3 0 00.713.31A26.226 26.226 0 0012 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 01-6.477-.427C4.047 21.128 3 19.852 3 18.4z" />
+            </svg>
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none md:w-8 md:h-8 text-primary">
+              <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
+              <path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.967.052 1.83.585 2.332 1.39l.821 1.317c.24.383.645.643 1.11.71.386.054.77.113 1.152.177 1.432.239 2.429 1.493 2.429 2.909V18a3 3 0 01-3 3h-15a3 3 0 01-3-3V9.574c0-1.416.997-2.67 2.429-2.909.382-.064.766-.123 1.151-.178a1.56 1.56 0 001.11-.71l.822-1.315a2.942 2.942 0 012.332-1.39zM6.75 12.75a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0zm12-1.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+            </svg>
+            {% endif %}
+            <div class="space-y-0">
+              <strong class="block">{% if c.vendor.profile.company_name %}{{c.vendor.profile.company_name|title}}{% else %}{{c.vendor|title}}{% endif %}</strong>
+              <p class="text-sm font-normal">{% if c.contract_order.delivery_location %}{{c.contract_order.delivery_location.delivery_to|title}}{% else %}Nigeria{% endif %}</p>
+            </div>
+          </div>
+
+          <div class="space-y-1 text-right">
+            <span class="block font-normal text-primary">₦{% if c.total_cost %}{{c.total_cost|floatformat:2|intcomma}}{% else %}{{c.contract_amount|floatformat:2|intcomma}}{% endif %}</span>
+            <span class="block font-bold text-s {% if not c.contract_paid %}text-danger{% else %}text-success{% endif %}">{% if not c.contract_paid %}UNPAID{% else %}PAID{% endif %}</span>
+          </div>
+        </div>
+
+        <div class="pt-4 flex items-start justify-between">
+          <div class="space-y-0">
+            <strong class="text-gray-400 text-sm text-left block">Contract Brief</strong>
+            <div class="text-gray-500 text-s flex items-center space-x-1"><span class="block">{{c.contract_type}}</span> <div class="dot-gray"></div><span class="block font-bold text-primary">{% if not c.approved %}UNAPPROVED{% else %}APPROVED{% endif %}</span></div>
+            <div class="flex items-center justify-between space-x-4">
+              {% if c.contract_type == c.SERVICE %}
+              <div class="flex items-center space-x-2 text-s"> <strong class="font-bold">{{c.get_complete_milestones_count}}</strong> <span>of</span> <span class="block font-bold">{{c.get_milestones_count}}</span> <span class="block font-bold">Milestones Completed</span></div>
+              {% else %}
+              <div class="flex items-center space-x-2 text-s"><span class="block">{{c.get_products_count}}</span> <span class="block font-bold">Products Item</span></div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="space-y-0 text-right">
+            <strong class="text-gray-400 text-sm text-right block">Name of Client</strong>
+            <p class="block font-bold text-base">{{c.buyer|title}}</p>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <div class="text-gray-600 text-sm p-2 rounded-xl text-center">No Active Contract to return yet.</div>
+      {% endfor %}
+    </div>
+
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Transaction History</span> </strong> <a href="{% url 'escrow:list_contracts' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <div class="w-full relative max-h-72 overflow-y-auto scrollbar-hidden scrollbar-hide btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden">
+      {% for tx in object.all_transactions|slice:":7" %}
+      <div class="flex items-center justify-between hover:shadow-md hover:scale-105 duration-500">
+        <div class="flex items-center space-x-4">
+          <div class="p-4 bg-gray-200 text-gray-700 rounded-full">
+            {% if tx.vendor == object %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-success/50">
+              <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
+              <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
+              <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
+            </svg>
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-danger/50">
+              <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
+              <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" clip-rule="evenodd" />
+            </svg>
+            {% endif %}
+          </div>
+          <div>
+            {% if tx.vendor %}
+            <strong class="text-base font-bold block">From {% if tx.buyer.name %}{{tx.buyer.name|title}}{% else %}{{tx.buyer.username|title}}{% endif %}</strong>
+            {% else }
+            <strong class="text-base font-bold block">To {% if tx.vendor.name %}{{tx.vendor.name|title}}{% else %}{{tx.vendor.username|title}}{% endif %}</strong>
+            {% endif %}
+            <p class="text-normal text-gray-300 text-s">{{tx.modified|date:"M d, Y"}}</p>
+          </div>
+        </div>
+        <div class="text-right">
+          {% if tx.vendor %}
+          <strong class="text-base font-bold block text-success">+ {{tx.total_cost}}</strong>
+          <p class="text-normal text-gray-300 text-s">Amount Recieved</p>
+          {% else }
+          <strong class="text-base font-bold block text-danger">- {{tx.total_cost}}</strong>
+          <p class="text-normal text-gray-300 text-s">Amount Spent</p>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="text-gray-600 text-sm p-2 rounded-xl text-center">No Transaction History to return yet.</div>
+      {% endfor %}
+      <div class="absolute w-full bg-white/10 backdrop-blur-sm h-1/4 rounded-b-xl bottom-0 left-0"></div>
+    </div>
+
+  </div>
+  <div class="w-full space-y-4 md:space-y-8">
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Expences / Earning</span> <div class="w-2 h-2 bg-gray-700 rounded-full"></div> <span class="block">{% now 'Y' %}</span></strong> <a href="" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <div class="w-full btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden">
+      <canvas class="p-0" id="user-chart" x-init="getData" x-data="ChartJs"></canvas>
+    </div>
+
+
+
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Customers</span> </strong> <a href="" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <div class="w-full btn-rounded bg-white text-gray-700 p-4 shadow-md max-h-72 relative">
+      {% for c in object.all_customers|slice:":6" %}
+      <div class="cursor-pointer group {% if not forloop.last %}mb-3{% endif %} duration-300 flex items-center space-x-4 bg-gray-100 p-3 rounded-xl hover:shadow-md justify-between">
+          <div class="flex items-center space-x-4">
+            <img src="{% if c.image %}{{c.image.url}}{% else %}https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png{% endif %}" alt="{{c.user.username}}" class="h-12 w-12 object-cover rounded-full block">
+            <div class="space-y-0 flex flex-col">
+              <h4 class="font-bold text-base">{% if c.name %}{{c.name}}{% else %}{{c.username}}{% endif %}</h4>
+              <p class="block text-s font-bold text-primary">{% if c.email %}{{c.email}}{% else %}None{% endif %}</p>
+              <p class="block text-s font-bold text-gray-500">{% if c.profile.phone %}{{c.profile.phone}}{% else %}None{% endif %}</p>
+            </div>
+          </div>
+
+          <a class="w-8 h-8 hidden flex-none duration-300 group-hover:block" href="mailto://{{c.email}}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8">
+              <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+              <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+            </svg>
+          </a>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 block flex-none duration-300 group-hover:hidden">
+            <path fill-rule="evenodd" d="M17.834 6.166a8.25 8.25 0 100 11.668.75.75 0 011.06 1.06c-3.807 3.808-9.98 3.808-13.788 0-3.808-3.807-3.808-9.98 0-13.788 3.807-3.808 9.98-3.808 13.788 0A9.722 9.722 0 0121.75 12c0 .975-.296 1.887-.809 2.571-.514.685-1.28 1.179-2.191 1.179-.904 0-1.666-.487-2.18-1.164a5.25 5.25 0 11-.82-6.26V8.25a.75.75 0 011.5 0V12c0 .682.208 1.27.509 1.671.3.401.659.579.991.579.332 0 .69-.178.991-.579.3-.4.509-.99.509-1.671a8.222 8.222 0 00-2.416-5.834zM15.75 12a3.75 3.75 0 10-7.5 0 3.75 3.75 0 007.5 0z" clip-rule="evenodd" />
+          </svg>
+      </div>
+      {% empty %}
+      <div class="text-gray-600 text-sm p-2 rounded-xl text-center">No Client to return yet.</div>
+      {% endfor %}
+      <div class="absolute w-full bg-white/10 backdrop-blur-sm h-1/4 rounded-b-xl bottom-0 left-0"></div>
+    </div>
+
+  </div>
+</section>
+{% endblock content %}

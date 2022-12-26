@@ -1,0 +1,154 @@
+{% load static %}
+
+<footer class="pb-24 md:pb-10 pt-10 px-4 md:px-24 xl:px-44 w-full space-y-4 bg-black text-white text-sm font-semibold divide-y-2 divide-light/30">
+  <div class="text-center md:text-left py-6 md:py-14 md:flex md:items-start md:justify-between md:px-14 md:space-y-0 space-y-10 md:divide-y-0 divide-y-2 divide-light/30">
+    <div class="w-full max-w-lg space-y-3">
+      <h4 class="text-2xl md:text-4xl font-font-semibold">The <span
+        class="duration-500 cursor-pointer hover:underline hover:decoration-debug text-warning italic">Smarter</span>
+      Way to do Business Online.</h4>
+      <p class="text-sm font-normal hidden">Trustscrow has everything you need to shop online with assurance to pay only for products which meet your requirements thus ensuring what you ordered is exactly what you get. Product compliance is a must</p>
+    </div>
+
+    <div class=" md:pt-0 pt-8 md:flex md:items-start w-full max-w-2xl md:space-x-14 space-y-8 md:space-y-0 font-normal">
+      <div class="space-y-3">
+        <strong class="text-base">Features</strong>
+        <ul class="text-sm space-y-2 md:max-w-full max-w-fit mx-auto md:mx-0">
+          <li class="group duration-300 min-w-min">
+            <a href="{% url 'home' %}#how" class="block group-hover:font-semibold">How it works</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <!-- <li class="group duration-300 min-w-min">
+            <a href="" class="block group-hover:font-semibold">Trustpay</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300 min-w-min">
+            <a href="" class="block group-hover:font-semibold">Vendify</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300 min-w-min">
+            <a href="" class="block group-hover:font-semibold">Pricing</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300 min-w-min">
+            <a href="" class="block group-hover:font-semibold">Blog</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li> -->
+          <li class="group duration-300 hidden min-w-min" id="installButton">
+            <a href="javascript:;" class="block group-hover:font-semibold">Install PWA</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="group duration-300 hidden min-w-min" id="subscribeNotificationButton">
+            <a href="javascript:;" class="block group-hover:font-semibold">Subscribe Pushnotification</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          {% comment %}
+          <!-- <button class="hidden w-full py-2 px-3 bg-warning text-black font-bold rounded-md" role="button" >{% trans "Install" %}</button> -->
+          <!-- <button class="hidden w-full py-3 px-3 bg-black text-white font-bold rounded-md" role="button" id="subscribeNotificationButton">{% trans "Subscribe Pushnotification" %}</button> -->
+          {% endcomment %}
+          {% endif %}
+
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <strong class="text-base">Company</strong>
+        <ul class="text-sm space-y-2 md:max-w-full max-w-fit mx-auto md:mx-0">
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">About Us</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="{% url 'contact' %}" class="block group-hover:font-semibold">Contact Support</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <!-- <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Request Form</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li> -->
+          <!-- <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Stories</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li> -->
+          <!-- <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Career</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li> -->
+          <!-- <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Blog</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">FAQ</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li> -->
+
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <strong class="text-base">Documentation</strong>
+        <ul class="text-sm space-y-2 md:max-w-full max-w-fit mx-auto md:mx-0">
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Third Party Integration</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Developers</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Plug n Play</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+        </ul>
+      </div>
+      <div class="space-y-3">
+        <strong class="text-base">Socials</strong>
+        <ul class="text-sm space-y-2 md:max-w-full max-w-fit mx-auto md:mx-0">
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Instagram</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Facebook</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">LinkedIn</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+          <li class="group duration-300">
+            <a href="" class="block group-hover:font-semibold">Twitter</a>
+            <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center md:text-left py-2 md:flex md:items-center md:justify-between md:space-y-0 space-y-4">
+    <p class="block pt-6 md:pt-0 text-sm font-normal md:order-1 order-2">© Trustscrow (RC1932773). All rights reserved.</p>
+
+    <ul class="block md:order-2 order-1 md:flex md:items-center md:space-y-0 space-y-3 text-sm md:space-x-4 md:max-w-full max-w-fit mx-auto md:mx-0">
+      <li class="group duration-300">
+        <a href="" class="block group-hover:font-semibold">AML Policy</a>
+        <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+      </li>
+      <li class="group duration-300">
+        <a href="" class="block group-hover:font-semibold">Privacy Policy</a>
+        <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+      </li>
+      <li class="group duration-300">
+        <a href="" class="block group-hover:font-semibold">Cookie Policy</a>
+        <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+      </li>
+      <li class="group duration-300">
+        <a href="" class="block group-hover:font-semibold">Vendor Policy</a>
+        <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+      </li>
+      <li class="group duration-300">
+        <a href="" class="block group-hover:font-semibold">Terms of Use</a>
+        <div class="group-hover:w-full w-0 duration-300 h-[1.75px] bg-white"></div>
+      </li>
+    </ul>
+  </div>
+</footer>

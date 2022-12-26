@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{ block.super }}Risk-free Transactions
+{% endblock title %}
+
+{% block content %}
+<section class="w-screen py-24 justify-center items-center flex flex-col">
+  <div class="w-full pl-4 pr-4 md:pr-0 md:pl-24 xl:pr-0 xl:pl-44 flex items-start md:space-x-8 md:justify-between">
+    <form x-init="checkValidity" x-data="ContractForm" action="{% url 'escrow:create_contract' %}" x-ref="form"
+      data-csrf="{{csrf_token}}" method="POST" class="block w-full md:max-w-2xl space-y-14 relative"
+      >
+      {% csrf_token %}
+
+      <h1 class="text-4xl font-bold md:text-6xl max-w-xl">
+        The <span
+          class="duration-500 cursor-pointer hover:underline hover:decoration-debug text-warning italic">Smarter</span>
+        Way to do Business Online.
+      </h1>
+      <p class="text-debug font-normal text-sm leading loose max-w-md">Shop online from anywhere in world, make payments
+        only for the products you want and complies with the terms of agreement between you and the vendor.
+      </p>
+
+      <div x-show.transition="step === 'complete'" x-cloak="step !== 'complete'">
+        <div class="bg-white rounded-lg p-10 flex items-center shadow justify-between">
+          <div>
+            <svg class="mb-4 h-20 w-20 text-green-500 mx-auto" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd" />
+            </svg>
+
+            <h2 class="text-2xl mb-4 text-gray-800 text-center font-bold">Contract Generated</h2>
+
+            <div class="text-gray-600 mb-8">
+              Thank you. We have sent an email to <span id="emailText"></span>. Please click the link in the mail to
+              complete the contract.
+            </div>
+
+            <button @click="refesh"
+              class="w-40 block mx-auto focus:outline-none py-2 px-5 rounded-lg shadow-sm text-center text-gray-600 bg-white hover:bg-gray-100 font-medium border"
+              x-text="stageTwo"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3 bg-white rounded-lg p-3 md:p-5 shadow" x-show.transition="step != 'complete'">
+
+        <!-- Top Navigation -->
+        <div class="border-b-2 py-4">
+          <div class="uppercase tracking-wide text-xs font-bold text-gray-500 mb-1 leading-tight"
+            x-text="`Step: ${step} of 5`"></div>
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div class="flex-1">
+              <div x-show="step === 1">
+                <div class="text-lg font-bold text-gray-700 leading-tight">Escrow Type</div>
+              </div>
+
+              <div
+                x-show="step === 2">
+                <div class="text-lg font-bold text-gray-700 leading-tight">Vendor Details</div>
+              </div>
+
+              <div
+                x-show="step === 3">
+                <div class="text-lg font-bold text-gray-700 leading-tight">Buyer Details</div>
+              </div>
+
+              <div x-show="step === 4">
+                <div class="text-lg font-bold text-gray-700 leading-tight">Terms of Agreement</div>
+              </div>
+
+              <div x-show="step === 5">
+                <div class="text-lg font-bold text-gray-700 leading-tight">Terms for Termination</div>
+              </div>
+            </div>
+
+            <div class="flex items-center md:w-64">
+              <div class="w-full bg-gray-100 rounded-full mr-2">
+                <div class="rounded-full bg-warning text-xs leading-none h-2 text-center text-white"
+                  :style="'width: '+ parseInt(step / 5 * 100) +'%'">
+                </div>
+              </div>
+              <div class="text-xs w-10 text-gray-600"
+                x-text="parseInt(step / 5 * 100) +'%'">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /Top Navigation -->
+
+
+        <!-- content -->
+        <div class="py-5">
+          <!-- type of escrow -->
+          <div x-show.transition.in="step === 1" class="space-y-4">
+            <div class="mb-2">
+              <span class="text-sm font-bold mb-1 text-gray-700 block">What is your role as
+                creator?</span>
+
+              <div class="flex space-x-4 mx-auto">
+                <label
+                  class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
+                  <div class="text-teal-600 mr-3">
+                    <input type="radio" id="id_creator" name="creator" value="Vendor" x-model="formData.creator"
+                      class="form-radio focus:outline-none focus:shadow-outline" />
+                  </div>
+                  <div class="select-none text-gray-700">Vendor</div>
+                </label>
+
+                <label
+                  class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
+                  <div class="text-teal-600 mr-3">
+                    <input type="radio" id="id_creator" name="creator" value="Contractor" x-model="formData.creator"
+                      class="form-radio focus:outline-none focus:shadow-outline" />
+                  </div>
+                  <div class="select-none text-gray-700">Contractor</div>
+                </label>
+              </div>
+              <span id="error-wrapper-creator" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+            </div>
+            <div class="mb-2">
+              <span class="text-sm font-bold mb-1 text-gray-700 block">What do you need a contract
+                for?</span>
+
+              <div class="flex space-x-4 mx-auto">
+                <label
+                  class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
+                  <div class="text-teal-600 mr-3">
+                    <input type="radio" name="contract_type" value="SERVICE" x-model="formData.contract_type"
+                      class="form-radio focus:outline-none focus:shadow-outline" />
+                  </div>
+                  <div class="select-none text-gray-700">Services</div>
+                </label>
+
+                <label
+                  class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
+                  <div class="text-teal-600 mr-3">
+                    <input type="radio" name="contract_type"value="PRODUCT" x-model="formData.contract_type"
+                      class="form-radio focus:outline-none focus:shadow-outline" />
+                  </div>
+                  <div class="select-none text-gray-700">Products</div>
+                </label>
+              </div>
+              <span id="error-wrapper-contract_type"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+            </div>
+            <div class="relative">
+              <input x-model="formData.amount" type="number" step="0.01" min="0.00" max="30000000.00" x-on:keydown="bpop=false; vpop=false" required type="text" name="amount" id="id_amount"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-amount" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_vendor"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Contract Amount</label>
+            </div>
+            <div class="relative">
+              <input x-model="formData.localization" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="localization" id="id_localization"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-localization" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_localization"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Delivery Location / Service Location</label>
+            </div>
+
+            <div class="hidden" :class="{'hidden':formData.contract_type == 'SERVICE', 'relative':formData.contract_type=='PRODUCT', 'hidden':formData.contract_type==''}">
+              <input x-model="formData.title" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="title" id="id_title"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-title" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_title"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Contract Title / Service Title</label>
+            </div>
+
+          </div>
+
+
+          <!-- vendor detail -->
+          <div class="space-y-3"
+            x-show.transition.in="step === 2">
+            <div class="relative">
+              <input x-model="formData.vendor_email" value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}" type="email" hx-post="{% url 'users:all' %}" required hx-trigger="keyup changed delay:1s" hx-swap="outerHTML" hx-target="#vresult" type="email" name="vendor_email" id="id_vendor_email"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-vendor_email"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+              <label for="id_vendor_email"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Email</label>
+
+              <div id="vresult" class="w-full z-20 left-0 right-0 absolute min-h-0 max-h-44 overflow-y-auto scrollbar-thin bg-gray-100 shadow-md rounded-xl p-0 top-14 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+            <div class="relative">
+              <input x-model="formData.vendor" value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_name}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="vendor" id="id_vendor"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-vendor" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_vendor"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Name / Company Name</label>
+            </div>
+            <div class="relative">
+              <input x-model="formData.vendor_phone" value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_phone_I}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="vendor_phone" id="id_vendor_phone"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-vendor_phone"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_vendor_phone"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Phone</label>
+            </div>
+            <div class="relative">
+              <input x-model="formData.vendor_address" value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_address}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="vendor_address" id="id_vendor_address"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-vendor_address"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_vendor_address"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                Address</label>
+            </div>
+          </div>
+
+          <div class="space-y-3"
+            x-show.transition.in="step === 3">
+            <div class="relative">
+              <input x-model="formData.buyer_email" value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}" type="email" hx-post="{% url 'users:all' %}" required hx-trigger="keyup changed delay:1s" hx-swap="outerHTML" hx-target="#bresult" name="buyer_email" id="id_buyer_email"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-buyer_email"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+              <label for="id_buyer_email"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                Email</label>
+
+              <div id="bresult" class="w-full z-20 left-0 right-0 absolute min-h-0 max-h-44 overflow-y-auto scrollbar-thin bg-gray-100 shadow-md rounded-xl p-0 top-14 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+            <div class="relative">
+              <input x-model="formData.buyer" value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.name}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer" id="id_buyer"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-buyer" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_buyer"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                Name</label>
+            </div>
+            <div class="relative">
+              <input x-model="formData.buyer_phone" value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.phone}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer_phone" id="id_buyer_phone"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-buyer_phone"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_buyer_phone"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                Phone</label>
+            </div>
+            <div class="relative">
+              <input x-model="formData.buyer_address" value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.address}}{% endif %}" type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer_address" id="id_buyer_address"
+                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+                placeholder=" " />
+              <span id="error-wrapper-buyer_address"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_buyer_address"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                Address</label>
+            </div>
+          </div>
+
+          <div x-show.transition.in="step === 4">
+            <div class="relative">
+              <textarea x-model="formData.terms_agreement" id="id_terms_agreement" name="terms_agreement" rows="4"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder=""></textarea>
+              <span id="error-wrapper-terms_agreement"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_terms_agreement"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Write
+                the agreement here...</label>
+            </div>
+          </div>
+
+          <div x-show.transition.in="step === 5">
+            <div class="relative">
+              <textarea x-model="formData.terms_for_termination" id="id_terms_for_termination" name="terms_for_termination"
+                rows="4"
+                class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder=""></textarea>
+              <span id="error-wrapper-terms_for_termination"
+                class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+              <label for="id_terms_for_termination"
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Write
+                the terms for termination here...</label>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Bottom Navigation -->
+        <div class="py-2 rounded-b-xl w-full">
+          <div class="flex justify-between">
+            <button :disabled="loading" x-show="step > 1" @click="back"
+              class="btn-warning btn-rounded flex items-center space-x-3" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd"
+                  d="M11.03 3.97a.75.75 0 010 1.06l-6.22 6.22H21a.75.75 0 010 1.5H4.81l6.22 6.22a.75.75 0 11-1.06 1.06l-7.5-7.5a.75.75 0 010-1.06l7.5-7.5a.75.75 0 011.06 0z"
+                  clip-rule="evenodd" />
+              </svg>
+
+              <span class="block">Back</span>
+            </button>
+
+            <button :disabled="formError===true; loading" id="next"
+              x-show="step < 4" @click="next"
+              class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
+              <div role="status" x-show="loading">
+                <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
+                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
+              </div>
+              <span class="block">Continue</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+                <path fill-rule="evenodd"
+                  d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <button :disabled="loading" id="next"
+            x-show="step == 4" @click="next2"
+            class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
+            <div role="status" x-show="loading">
+              <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
+                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor" />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill" />
+              </svg>
+              <span class="sr-only">Loading...</span>
+            </div>
+            <span class="block">Continue</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+              <path fill-rule="evenodd"
+                d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+
+            <button @click="submitContract" :disabled="loading" id="submitForm"
+              x-show="step === 5"
+              class="btn-black btn-rounded flex itmes-center space-x-3 float-right" type="submit">
+              <div role="status" x-show="loading">
+                <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
+                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
+              </div>
+              <span class="block" x-text="contractText"></span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+                <path fill-rule="evenodd"
+                  d="M4.72 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L11.69 12 4.72 5.03a.75.75 0 010-1.06zm6 0a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06L17.69 12l-6.97-6.97a.75.75 0 010-1.06z"
+                  clip-rule="evenodd" />
+              </svg>
+
+            </button>
+          </div>
+        </div>
+        <!-- / Bottom Navigation https://placehold.co/300x300/e2e8f0/cccccc -->
+
+      </div>
+
+    </form>
+
+    <div class="w-full md:max-w-2xl relative hidden md:block">
+      <div class="absolute -top-14 right-0 max-h-64">
+        <img src="{% static 'vendors/images/icons/google.png' %}" alt="google search"
+          class="absolute bottom-4 -left-8 max-h-16 bg-white rounded-full shadow-md object-fit p-4">
+        <img src="{% static 'vendors/images/home/hero1.jpg' %}" alt="hero 1" class="h-full">
+        <div
+          class="p-4 flex items-center space-x-4 absolute right-4 top-76 h-min min-w-64 bg-white/40 shadow-xl rounded-md">
+          <div class="rounded-full p-3 bg-warning/30 shadow-md flex-none"><img
+              src="{% static 'vendors/images/icons/fiverr.png' %}" alt="fiverr logo" class="h-8"></div>
+          <div class="space-y-2 flex-none w-56">
+            <strong class="text-base font-bold">Voice Over Artist</strong>
+            <p class="text-debug text-s">I will do a voice over within 2 days mastered and edited for any commercial you
+              desire</p>
+          </div>
+          <div class="space-y-2">
+            <strong class="text-black font-bold text-xl">$24/<small class="text-s">hr</small></strong>
+            <p class="text-debug text-s">Fixed Rate</p>
+          </div>
+        </div>
+      </div>
+      <div class="absolute top-64 -left-14">
+        <img src="{% static 'vendors/images/home/hero2.jpg' %}" alt="hero 2"
+          class="w-44 rounded-xl border-8 border-white flex-none">
+        <img src="{% static 'vendors/images/icons/shopify.png' %}" alt="shopify"
+          class="absolute bottom-4 -right-8 max-h-16 bg-white rounded-full shadow-md object-fit p-4">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="w-screen px-4 md:px-24 xl:px-44 py-14 bg-white">
+  <div class="space-y-12">
+    <div class="space-y-4 text-center max-w-lg mx-auto">
+      <h2 class="text-3xl md:text-4xl font-normal">95% of vendors say switching to <strong
+          class="text-warning font-bold italic duration-500 cursor-pointer hover:underline hover:decoration-debug">Trustscrow</strong>
+        is easy.</h2>
+      <p class="text-debug text-sm">Trustscrow has everything you need to compliantly do business online, pay for goods
+        and services as well as manage your orders while worrying less of being defrauded or sent a sub-standard
+        product/service.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+      <div class="space-y-4  text-center py-6">
+        <h3 class="text-4xl text-black font-bold">99.90%</h3>
+        <p class="text-sm text-debug/60">Successful Payments</p>
+      </div>
+      <div class="space-y-4  text-center py-6">
+        <h3 class="text-4xl text-black font-bold">24+</h3>
+        <p class="text-sm text-debug/60">Companies and Startups</p>
+      </div>
+      <div class="space-y-4  text-center py-6">
+        <h3 class="text-4xl text-black font-bold">24/7</h3>
+        <p class="text-sm text-debug/60">Always-on Support</p>
+      </div>
+      <div class="space-y-4  text-center py-6">
+        <h3 class="text-4xl text-black font-bold">3</h3>
+        <p class="text-sm text-debug/60">Operational Countries</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="w-screen md:flex md:items-stretch flex-none max-h-max">
+  <div
+    class="h-full flex-none order-2 md:order-1 p-6 w-full md:w-2/4 flex items-start overflow-x-auto scrollbar-thin space-x-6">
+    <div
+      class="h-full flex-none space-y-6 w-64 md:w-96 shadow flex-none border-t-4 border-t-warning bg-white px-6 py-16 hover:shadow-xl duration-300 cursor-pointer">
+      <img src="{% static 'vendors/images/icons/shopping-cart.png' %}" alt="search online"
+        class="h-16 rounded-full p-4 bg-white shadow-md aspect-1">
+      <h4 class="text-2xl font-normal">Search Service or Product Online</h4>
+
+      <p class="text-debug/50 text-sm">
+        While surfing online, you come accross a product or service you intend to purchase or contract, speak directly
+        with the vendor pitching for a compliance agreement to be made with trustscrow.
+      </p>
+    </div>
+    <div
+      class="h-full flex-none space-y-6 w-64 md:w-96 shadow flex-none border-t-4 border-t-warning bg-white px-6 py-16 hover:shadow-xl duration-300 cursor-pointer">
+      <img src="{% static 'vendors/images/icons/completed.png' %}" alt="search online"
+        class="h-16 rounded-full p-4 bg-white shadow-md aspect-1">
+      <h4 class="text-2xl font-normal">Request for Compliance Agreement</h4>
+
+      <p class="text-debug/50 text-sm">
+        While surfing online, you come accross a product or service you intend to purchase or contract, speak directly
+        with the vendor pitching for a compliance agreement to be made with trustscrow.
+      </p>
+    </div>
+    <div
+      class="h-full flex-none space-y-6 w-64 md:w-96 shadow flex-none border-t-4 border-t-warning bg-white px-6 py-16 hover:shadow-xl duration-300 cursor-pointer">
+      <img src="{% static 'vendors/images/icons/briefcase.png' %}" alt="compliance and milestone set"
+        class="h-16 rounded-full p-4 bg-white shadow-md aspect-1">
+      <h4 class="text-2xl font-normal">Milestones Set</h4>
+
+      <p class="text-debug/50 text-sm">
+        While surfing online, you come accross a product or service you intend to purchase or contract, speak directly
+        with the vendor pitching for a compliance agreement to be made with trustscrow.
+      </p>
+    </div>
+    <div
+      class="h-full flex-none space-y-6 w-64 md:w-96 shadow flex-none border-t-4 border-t-warning bg-white px-6 py-16 hover:shadow-xl duration-300 cursor-pointer">
+      <img src="{% static 'vendors/images/icons/cc.png' %}" alt="escrow pay"
+        class="h-16 rounded-full p-4 bg-white shadow-md aspect-1">
+      <h4 class="text-2xl font-normal">Pay Online</h4>
+
+      <p class="text-debug/50 text-sm">
+        While surfing online, you come accross a product or service you intend to purchase or contract, speak directly
+        with the vendor pitching for a compliance agreement to be made with trustscrow.
+      </p>
+    </div>
+    <div
+      class="h-full flex-none space-y-6 w-64 md:w-96 shadow flex-none border-t-4 border-t-warning bg-white px-6 py-16 hover:shadow-xl duration-300 cursor-pointer">
+      <img src="{% static 'vendors/images/icons/check-mark.png' %}" alt="complete agreement"
+        class="h-16 rounded-full p-4 bg-white shadow-md aspect-1">
+      <h4 class="text-2xl font-normal">Mark Agreement as Complete</h4>
+
+      <p class="text-debug/50 text-sm">
+        While surfing online, you come accross a product or service you intend to purchase or contract, speak directly
+        with the vendor pitching for a compliance agreement to be made with trustscrow.
+      </p>
+    </div>
+  </div>
+  <div
+    class="min flex-none flex flex-col md:order-2 order-1 bg-white md:w-2/4 space-y-6 justify-center px-4 md:px-14 py-12">
+    <div class="max-w-md space-y-4 md:ml-24">
+      <h4 class="text-4xl block font-semibold">Go from surfing to purchase in minutes</h4>
+      <p class="text-debug text-sm block">See a service or product online you like? Contact the Vendor and request to
+        make payments to them through an escrow. Create a contract that's compliant with local laws, send a copy for
+        signing, and they'll get your product or service moving almost instantly.</p>
+      <a href="" class="btn-warning flex w-fit btn-rounded font-semibold flex items-center space-x-3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path
+            d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z" />
+        </svg>
+        <span class="block">Get Started</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="w-screen px-4 md:px-24 xl:px-44 py-14 bg-white">
+  <div class="my-10 md:my-24 container mx-auto flex flex-col md:flex-row shadow-sm overflow-hidden"
+    x-data="{ testimonialActive: 2 }" x-cloak>
+    <div class="relative w-full py-2 md:py-24 bg-black md:w-1/2 flex flex-col item-center justify-center">
+
+      <div class="absolute top-0 left-0 z-10 grid-white w-16 h-16 md:w-40 md:h-40 md:ml-20 md:mt-24"></div>
+
+      <div
+        class="font-cursive relative text-2xl md:text-5xl py-2 px-6 md:py-6 md:px-1 md:w-64 md:mx-auto text-warning font-semibold leading-tight tracking-tight mb-0 z-20">
+        <span class="md:block">What our</span>
+        <span class="md-block">Vendors</span>
+        <span class="block">Are Saying!</span>
+      </div>
+
+      <div class="absolute right-0 bottom-0 mr-4 mb-4 hidden md:block">
+        <button
+          class="rounded-l-full border-r bg-gray-100 text-gray-500 focus:outline-none hover:text-warning font-bold w-12 h-10"
+          x-on:click="testimonialActive = testimonialActive === 1 ? 3 : testimonialActive - 1">
+          &#8592;
+        </button>
+        <button
+          class="rounded-r-full bg-gray-100 text-gray-500 focus:outline-none hover:text-warning font-bold w-12 h-10"
+          x-on:click="testimonialActive = testimonialActive >= 3 ? 1 : testimonialActive + 1">
+          &#8594;
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-gray-100 md:w-1/2">
+      <div class="flex flex-col h-full relative">
+
+        <div class="absolute top-0 left-0 mt-3 ml-4 md:mt-5 md:ml-12">
+          <svg xmlns="http://www.w3.org/2000/svg" class="text-warning/30 fill-current w-12 h-12 md:w-16 md:h-16"
+            viewBox="0 0 24 24">
+            <path
+              d="M6.5 10c-.223 0-.437.034-.65.065.069-.232.14-.468.254-.68.114-.308.292-.575.469-.844.148-.291.409-.488.601-.737.201-.242.475-.403.692-.604.213-.21.492-.315.714-.463.232-.133.434-.28.65-.35.208-.086.39-.16.539-.222.302-.125.474-.197.474-.197L9.758 4.03c0 0-.218.052-.597.144C8.97 4.222 8.737 4.278 8.472 4.345c-.271.05-.56.187-.882.312C7.272 4.799 6.904 4.895 6.562 5.123c-.344.218-.741.4-1.091.692C5.132 6.116 4.723 6.377 4.421 6.76c-.33.358-.656.734-.909 1.162C3.219 8.33 3.02 8.778 2.81 9.221c-.19.443-.343.896-.468 1.336-.237.882-.343 1.72-.384 2.437-.034.718-.014 1.315.028 1.747.015.204.043.402.063.539.017.109.025.168.025.168l.026-.006C2.535 17.474 4.338 19 6.5 19c2.485 0 4.5-2.015 4.5-4.5S8.985 10 6.5 10zM17.5 10c-.223 0-.437.034-.65.065.069-.232.14-.468.254-.68.114-.308.292-.575.469-.844.148-.291.409-.488.601-.737.201-.242.475-.403.692-.604.213-.21.492-.315.714-.463.232-.133.434-.28.65-.35.208-.086.39-.16.539-.222.302-.125.474-.197.474-.197L20.758 4.03c0 0-.218.052-.597.144-.191.048-.424.104-.689.171-.271.05-.56.187-.882.312-.317.143-.686.238-1.028.467-.344.218-.741.4-1.091.692-.339.301-.748.562-1.05.944-.33.358-.656.734-.909 1.162C14.219 8.33 14.02 8.778 13.81 9.221c-.19.443-.343.896-.468 1.336-.237.882-.343 1.72-.384 2.437-.034.718-.014 1.315.028 1.747.015.204.043.402.063.539.017.109.025.168.025.168l.026-.006C13.535 17.474 15.338 19 17.5 19c2.485 0 4.5-2.015 4.5-4.5S19.985 10 17.5 10z" />
+          </svg>
+        </div>
+
+        <div class="h-full relative z-10 font-slab">
+          <div x-show.immediate="testimonialActive === 1">
+            <p class="text-gray-600  font-normal italic px-6 py-6 md:px-16 md:py-10 text-xl md:text-2xl"
+              x-show.transition="testimonialActive == 1">
+              Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to
+              corporate strategy foster collaborative thinking to further the overall value proposition. Organically
+              grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
+            </p>
+          </div>
+
+          <div x-show.immediate="testimonialActive === 2">
+            <p class="text-gray-600  font-normal italic px-6 py-6 md:px-16 md:py-10 text-xl md:text-2xl"
+              x-show.transition="testimonialActive == 2">
+              Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day,
+              going forward, a new normal that has evolved from generation X is on the runway heading towards a
+              streamlined cloud solution. User generated content in real-time will have multiple touchpoints for
+              offshoring.
+            </p>
+          </div>
+
+          <div x-show.immediate="testimonialActive === 3">
+            <p class="text-gray-600  font-normal italic px-6 py-6 md:px-16 md:py-10 text-xl md:text-2xl"
+              x-show.transition="testimonialActive == 3">
+              Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the
+              digital divide with additional clickthroughs from DevOps. Nanotechnology immersion along the information
+              highway will close the loop on focusing solely on the bottom line.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex my-4 justify-center items-center">
+          <button @click.prevent="testimonialActive = 1"
+            class="text-center font-bold shadow-xs focus:outline-none focus:shadow-outline inline-block rounded-full mx-2"
+            :class="{'h-12 w-12 opacity-25 bg-warning/60 text-gray-600': testimonialActive != 1, 'h-16 w-16 opacity-100 bg-warning text-white': testimonialActive == 1 }">JD</button>
+          <button @click.prevent="testimonialActive = 2"
+            class="text-center font-bold shadow-xs focus:outline-none focus:shadow-outline h-16 w-16 inline-block bg-warning rounded-full mx-2"
+            :class="{'h-12 w-12 opacity-25 bg-warning/60 text-gray-600': testimonialActive != 2, 'h-16 w-16 opacity-100 bg-warning text-white': testimonialActive == 2 }">WD</button>
+          <button @click.prevent="testimonialActive = 3"
+            class="text-center font-bold shadow-xs focus:outline-none focus:shadow-outline h-12 w-12 inline-block bg-warning rounded-full mx-2"
+            :class="{'h-12 w-12 opacity-25 bg-warning/60 text-gray-600': testimonialActive != 3, 'h-16 w-16 opacity-100 bg-warning text-white': testimonialActive == 3 }">JW</button>
+        </div>
+
+        <div class="flex justify-center px-6 pt-2 pb-6 md:py-6">
+          <div class="text-center" x-show="testimonialActive == 1">
+            <h2 class="text-sm md:text-base font-bold text-gray-700 leading-tight">John Doe</h2>
+            <small class="text-gray-500 text-xs md:text-sm truncate">CEO, ABC Inc.</small>
+          </div>
+
+          <div class="text-center" x-show="testimonialActive == 2">
+            <h2 class="text-sm md:text-base font-bold text-gray-700 leading-tight">Winter Doe</h2>
+            <small class="text-gray-500 text-xs md:text-sm truncate">CTO, XYZ Corp.</small>
+          </div>
+
+          <div class="text-center" x-show="testimonialActive == 3">
+            <h2 class="text-sm md:text-base font-bold text-gray-700 leading-tight">John Wick</h2>
+            <small class="text-gray-500 text-xs md:text-sm truncate">Product Manager, Fake Corp.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<section x-data="{ shown: false }" x-intersect.threshold.70="shown = true" x-intersect.leave="shown = false"
+  class="w-screen px-4 md:px-24 xl:px-44 py-8 bg-body space-y-4">
+  <h4 class="text-3xl font-semibold text-center">Customer/Vendor Reviews</h4>
+  <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="mt-16 space-y-6">
+      <img x-show="shown" x-cloak="!shown" x-transition.duration.300
+        src="{% static 'vendors/images/persons/person1.jpg' %}" alt="person 1" class="w-full">
+      <p class="max-w-md block float-right text-right text-debug/60 text-sm">"Being able to ensure I am paying for a
+        quality service without waorrying for being defrauded is a flex."</p>
+      <strong class="block float-right text-right text-black font-semibold">Theresa Webb</strong>
+    </div>
+    <div class="mt-8 space-y-6">
+      <img x-show="shown" x-cloak="!shown" x-transition.duration.300
+        src="{% static 'vendors/images/persons/person2.jpg' %}" alt="person 1" class="w-full">
+      <p class="max-w-md block float-right text-right text-debug/60 text-sm">"Having my clients pay for my services with
+        trustscrow has greatly boosted my request."</p>
+      <strong class="block float-right text-right text-black font-semibold">John Revertin</strong>
+    </div>
+    <div class="mt-6 space-y-6">
+      <div class="mb-5 pt-16 space-y-6">
+        <img x-show="shown" x-cloak="!shown" x-transition.duration.300
+          src="{% static 'vendors/images/persons/person3.jpg' %}" alt="person 1" class="w-full">
+        <p class="max-w-md block float-right text-right text-debug/60 text-sm">"Having my clients pay for my services
+          with
+          trustscrow has greatly boosted my request."</p>
+        <strong class="block float-right text-right text-black font-semibold pb-10">John Revertin</strong>
+      </div>
+      <div class="pt-6 space-y-6">
+        <img x-show="shown" x-cloak="!shown" x-transition.duration.300
+          src="{% static 'vendors/images/persons/person4.jpg' %}" alt="person 1" class="w-full">
+        <p class="max-w-md block float-right text-right text-debug/60 text-sm">"Having my clients pay for my services
+          with
+          trustscrow has greatly boosted my request."</p>
+        <strong class="block float-right text-right text-black font-semibold">John Revertin</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,274 @@
+{% load static i18n webpack_loader notifications_tags humanize %}
+
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}" x-data="StickyNav" x-init="initState">
+  <head>
+    <title>{% block title %}Trustscrow — {% endblock title %}</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}Trustscrow is an escrow platform that helps secure payment when transacting with a third-party online and offline{% endblock description %}">
+    <meta name="author" content="Jeremiah David (Darkcodr Codes)">
+    <!-- TODO: Add keywords here -->
+    <meta name="keywords" content="{% block keywords %}escrow system, best escrow system in africa, pandascrow, paystack,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           Trustscrow{% endblock keywords %}">
+
+    <!-- Facebook OG Shared Link Information -->
+    <meta property="og:title" content="{% block og_title %}Trustscrow{% endblock og_title %}">
+    <meta property="og:site_name" content="{% block og_sitename %}Trustscrow{% endblock og_sitename %}">
+    <meta property="og:description" content="{% block og_description %}Escrow, Trustscrow, pandascrow, paystack, payment gateway, best escrow system in africa{% endblock og_description %}">
+    <meta property="og:image" content="{% block og_favicon %}{% static 'vendors/images/favicons/favicon.png' %}{% endblock og_favicon %}">
+    <meta property="og:url" content="{{ request.path }}">
+    <meta property="og:image:alt" content="Trustscrow logo">
+    <meta property="og:type" content="information technology, services" />
+
+    <!-- Twitter TWITTER Shared Link Information -->
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <meta name="htmx-config" content='{"historyCacheSize": 15}'>
+    <meta name="author" content="{% block author %}Jeremiah E. David{% endblock author %}">
+    <meta name="format-detection" content="telephone=yes">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="Classification" content="Service">
+    <meta name="category" content="Fintech">
+    <meta name="coverage" content="Worldwide">
+    <meta name="distribution" content="Global">
+
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fff">
+    <meta name="application-name" content="Trustscrow">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Trustscrow">
+    <meta name="msapplication-TileColor" content="#fff">
+    <meta name="msapplication-TileImage" content="{% static 'assets/mstile-144x144.png' %}">
+    <meta name="msapplication-config" content="{% static 'assets/browserconfig.xml' %}">
+
+    <link rel="icon" href="{% static 'vendors/images/favicon/favicon.png' %}">
+    <link rel="shortcut icon" href="{% static 'assets/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'assets/favicon-48x48.png' %}">
+    <link rel="manifest" href="{% static 'assets/manifest.json' %}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'assets/apple-touch-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'assets/apple-touch-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'assets/apple-touch-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/apple-touch-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'assets/apple-touch-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'assets/apple-touch-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'assets/apple-touch-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'assets/apple-touch-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{% static 'assets/apple-touch-icon-167x167.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/apple-touch-icon-180x180.png' %}">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="{% static 'assets/apple-touch-icon-1024x1024.png' %}">
+    <link rel="yandex-tableau-widget" href="{% static 'assets/yandex-browser-manifest.json' %}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&&family=DynaPuff:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&family=Poiret+One&family=Raleway:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;0,800;1,100;1,200&family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0&display=swap" rel="stylesheet">
+
+    {% stylesheet_pack 'app' %}
+
+    {{form.media}}
+  </head>
+
+  <body hx-header="{'X-CSRFToken':'{{csrf_token}}'}" hx-ext="debug, event-header" @scroll.window="scrollNav" style="background-image:url({% static 'vendors/images/bg.jpg' %}); background-size: contain; background-position: top left; background-repeat: repeat">
+
+    {% block nav %}
+    {% include "snippets/navbar.html" %}
+    {% endblock nav %}
+
+    <!-- view all notifications -->
+    <div x-transition.enter.duration.500ms x-transition.leave.duration.300ms :class="{'hidden w-0':!drawer, 'w-80 fixed z-50':drawer}" class="duration-500 divide-y-2 divide-y-black/30 hidden w-0 overflow-x-hidden h-screen p-4 overflow-y-auto bg-white hidden dark:bg-gray-800 top-0 right-0" tabindex="-1" aria-labelledby="drawer-contact-label">
+      <div class="w-full justify-between flex items-center">
+        <h5 id="drawer-label" class="inline-flex items-center mb-6 text-base font-semibold text-gray-500 uppercase dark:text-gray-400"><svg class="w-5 h-5 mr-2" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>Notifications</h5>
+        <button @click="drawer = false" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" >
+            <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            <span class="sr-only">Close menu</span>
+        </button>
+      </div>
+      {% for notify in user.notifications.all %}
+      <div @click="markRead({{notify.id}})" class="cursor-pointer flex items-center py-3 px-4 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <div class="flex-shrink-0">
+          <!-- <img class="w-11 h-11 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Jese image"> -->
+          <!-- <div
+            class="flex absolute justify-center items-center ml-6 -mt-5 w-5 h-5 bg-blue-600 rounded-full border border-white dark:border-gray-800">
+            <svg class="w-3 h-3 text-white" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z">
+              </path>
+              <path
+                d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z">
+              </path>
+            </svg>
+          </div> -->
+        </div>
+        <div class="pl-3 w-full space-y-4 {% if notify.unread %}text-bold{% else %}text-normal{% endif %}">
+          <div class="text-gray-500 text-xs mb-1.5 dark:text-gray-400">{% if notify.unread %}New message from: {% else %}Message from: {% endif %}<span
+              class="font-semibold text-sm">{{notify.actor}}</span></div>
+          <div class="text-gray-400 text-sm text-left">
+            {{notify.description}}
+          </div>
+          <div class="text-xs text-blue-600 dark:text-blue-500">{{notify.timestamp|naturaltime}}</div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="bg-body text-debug text-sm py-3 px-6 rounded-md">No Notification Available</div>
+      {% endfor %}
+    </div>
+
+
+    {% block main %}
+    <div id="main" class="w-screen min-h-[calc(100vh_-_14rem)] z-0">
+
+      {% block content %}
+        <p>Use this document as a way to quick start any new project.</p>
+      {% endblock content %}
+
+    </div> <!-- /container -->
+    {% endblock main %}
+
+    {% block modal %}
+
+    {% endblock modal %}
+
+
+    {% block totop %}
+    <button title="smooth scroll to top" :class="{'flex' : showNav, 'hidden' : !showNav}" @click="window.scrollTo({top: 0, behavior: 'smooth'})" class="z-30 h-10 md:h-16 w-10 md:w-16 justify-center hidden items-center bg-black text-white hover:text-warning focus:animate-bounce-slow hover::animate-bounce-slow duration-300 rounded-full fixed right-4 bottom-32">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
+      </svg>
+    </button>
+    {% endblock totop %}
+
+    {% block share %}
+    <button id="shareUrl" data-url="{{request.build_absolute_uri}}" title="share website" :class="{'flex' : showNav, 'hidden' : !showNav}" class="z-30 h-10 md:h-16 w-10 md:w-16 justify-center hidden items-center bg-warning text-black animate-pulse duration-300 rounded-full fixed right-4 bottom-[176px] md:bottom-[200px]">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+        <path fill-rule="evenodd" d="M15.75 4.5a3 3 0 11.825 2.066l-8.421 4.679a3.002 3.002 0 010 1.51l8.421 4.679a3 3 0 11-.729 1.31l-8.421-4.678a3 3 0 110-4.132l8.421-4.679a3 3 0 01-.096-.755z" clip-rule="evenodd" />
+      </svg>
+    </button>
+    {% endblock share %}
+
+    <section  @click.outside="menu=false, popout=false" x-data="{menu: false, popout:false}" class="z-40 animate-bounde-slow hover:animate-none w-screen md:hidden flex-none flex flex-col items-center fixed bottom-0 left-0 right-0 p-4 space-y-2">
+      <div x-transition.duration.300ms  :class="{'max-h-80 min-h-max duration-300 pt-4 flex-none pl-4 pr-4 pb-8':menu, 'h-0 duration-300':!menu}" class="w-full h-0 overflow-hidden rounded-t-xl bg-white/50 text-black backdrop-blur-md">
+        <div :class="{'h-52':popout}" class="w-full min-h-fit flex-wrap flex gap-4 flex-none relative">
+          <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">HOME</a>
+          <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">HOW IT WORKS</a>
+          <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">ABOUT</a>
+          <button @click="popout = !popout" type="button" class="btn-black flex-none btn-rounded text-s">PRODUCTS</button>
+          <div x-transition.duration.300ms :class="{'max-h-fit min-h-max w-full p-4  overflow-hidden':popout, 'w-0 h-0  overflow-hidden':!popout}" class="duration-300 overflow-hidden absolute h-0 w-0 left-0 right-0 bottom-8 top-0 z-50 bg-white/80 backdrop-blur-md rounded divide-y divide-debug/40 shadow-xl text-s flex flex-col">
+            <a href="" class="flex p-2 duration-300 hover:scale-105 items-center space-x-4">
+              <img src="{% static 'vendors/images/icons/trustpay.png' %}" alt="trustpay icon" class="h-12 block">
+              <div class="flex flex-col space-y-1">
+                <strong class="text-base block text-black">Trustpay</strong>
+                <p class="text-s text-debug">Quickly generate links to receive financial support from your customers</p>
+              </div>
+            </a>
+            <a href="" class="flex p-2 duration-300 hover:scale-105 flex-none items-center space-x-4">
+              <img src="{% static 'vendors/images/icons/vendfy.png' %}" alt="vendify icon" class="h-12 block">
+              <div class="flex flex-col space-y-1">
+                <strong class="text-base block text-black">Vendify</strong>
+                <p class="text-s text-debug">As a vendor get verfied so as to build credibility with your customers</p>
+              </div>
+            </a>
+            <button @click="popout = false" x-show="popout" x-cloak="!popout" class="bg-black p-2 btn-rounded text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                <path fill-rule="evenodd" d="M20.25 12a.75.75 0 01-.75.75H6.31l5.47 5.47a.75.75 0 11-1.06 1.06l-6.75-6.75a.75.75 0 010-1.06l6.75-6.75a.75.75 0 111.06 1.06l-5.47 5.47H19.5a.75.75 0 01.75.75z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          <a href="{% url 'home' %}" class="btn-black btn-rounded text-s">BLOG</a>
+        </div>
+      </div>
+      <div class="w-full bg-gray-700/70 backdrop-blur-md items-center relative flex text-white justify-between p-2">
+        <div class="flex items-center space-x-4">
+          <button @click="menu = !menu" class="hover:bg-white hover:text-black btn-rounded p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+              <path fill-rule="evenodd" d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          {% if request.user.is_authenticated %}
+          <a href="" class="hover:bg-white hover:text-black btn-rounded p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+              <path fill-rule="evenodd" d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z" clip-rule="evenodd" />
+              <path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
+            </svg>
+
+          </a>
+          {% endif %}
+
+        </div>
+
+        <a href="" class="block absolute -top-[24px] bg-warning text-black btn-rounded shadow-md px-3 py-3 left-[calc(50%_-_18px)]">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+            <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 013.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 013.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 01-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875zM12.75 12a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V18a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V12z" clip-rule="evenodd" />
+            <path d="M14.25 5.25a5.23 5.23 0 00-1.279-3.434 9.768 9.768 0 016.963 6.963A5.23 5.23 0 0016.5 7.5h-1.875a.375.375 0 01-.375-.375V5.25z" />
+          </svg>
+        </a>
+
+        <div class="flex items-center space-x-4">
+          {% if request.user.is_authenticated %}
+          <a href="" class="hover:bg-white hover:text-black btn-rounded p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+              <path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          <a href="{% url 'users:detail' user.username %}" class="hover:bg-white hover:text-black btn-rounded p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+            </svg>
+          </a>
+          {% else %}
+          <a href="{% url 'account_login' %}" class="btn-rounded btn-normal flex-none flex flex-col justify-center items-center space-y-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 flex-none">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+            </svg>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    {% block footer %}
+    {% include "snippets/footer.html" %}
+    {% endblock footer %}
+
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script>
+      window.WEB_PUSH_CFG = {
+          APPLICATION_SERVER_KEY: "{{APPLICATION_SERVER_KEY}}",
+          SEND_NOTIFICATION: "{% url 'send_notification' %}",
+          CREATE_WP_DEVICE: "{% url 'save_webpush_info' %}",
+      };
+      // window.PaystackPop = PaystackPop;
+    </script>
+
+    {% block inline_javascript %}
+    {% comment %}
+    Script tags with only code, no src (defer by default). To run
+    with a "defer" so that you run inline code:
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {/* Run whatever you want */});
+    </script>
+    {% endcomment %}
+    {% endblock inline_javascript %}
+
+    {% javascript_pack 'app' %}
+
+    <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+    {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+    <script>
+      tinymce.init({
+        selector: 'textarea',
+        height: 200,
+        valid_styles: {
+          '*': 'font-size,font-family,color,text-decoration,text-align'
+        },
+        powerpaste_word_import: 'clean',
+        powerpaste_html_import: 'clean',
+      });
+    </script>
+  </body>
+</html>
