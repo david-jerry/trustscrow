@@ -65,7 +65,7 @@ django-countries-plus==2.0.0
 django-htmx==1.9.0
 
 # push notification settings
-py-vapid==1.8.2
+py-vapid==1.9.0
 django-push-notifications==3.0.0
 pywebpush==1.9.4
 django-webpush==0.3.4
