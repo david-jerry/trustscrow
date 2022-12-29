@@ -154,10 +154,10 @@
       <div x-transition.duration.300ms  :class="{'max-h-80 min-h-max duration-300 pt-4 flex-none pl-4 pr-4 pb-8':menu, 'h-0 duration-300':!menu}" class="w-full h-0 overflow-hidden rounded-t-xl bg-white/50 text-black backdrop-blur-md">
         <div :class="{'h-52':popout}" class="w-full min-h-fit flex-wrap flex gap-4 flex-none relative">
           <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">HOME</a>
-          <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">HOW IT WORKS</a>
-          <!-- <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">ABOUT</a> -->
+          <a href="{% url 'home' %}#how" class="btn-black btn-rounded text-s flex-none">HOW IT WORKS</a>
+          <a href="{% url 'contact' %}" class="btn-black btn-rounded text-s flex-none">CONTACT</a>
 
-          <button @click="popout = !popout" type="button" class="btn-black flex-none btn-rounded text-s">PRODUCTS</button>
+          <!-- <button @click="popout = !popout" type="button" class="btn-black flex-none btn-rounded text-s">PRODUCTS</button>
           <div x-transition.duration.300ms :class="{'max-h-fit min-h-max w-full p-4  overflow-hidden':popout, 'w-0 h-0  overflow-hidden':!popout}" class="duration-300 overflow-hidden absolute h-0 w-0 left-0 right-0 bottom-8 top-0 z-50 bg-white/80 backdrop-blur-md rounded divide-y divide-debug/40 shadow-xl text-s flex flex-col">
             <a href="" class="flex p-2 duration-300 hover:scale-105 items-center space-x-4">
               <img src="{% static 'vendors/images/icons/trustpay.png' %}" alt="trustpay icon" class="h-12 block">
@@ -178,7 +178,7 @@
                 <path fill-rule="evenodd" d="M20.25 12a.75.75 0 01-.75.75H6.31l5.47 5.47a.75.75 0 11-1.06 1.06l-6.75-6.75a.75.75 0 010-1.06l6.75-6.75a.75.75 0 111.06 1.06l-5.47 5.47H19.5a.75.75 0 01.75.75z" clip-rule="evenodd" />
               </svg>
             </button>
-          </div>
+          </div> -->
 
           <!-- <a href="{% url 'home' %}" class="btn-black btn-rounded text-s">BLOG</a> -->
         </div>
