@@ -30,6 +30,7 @@ class ContractForm(forms.ModelForm):
     class Meta:
         model = Contract
         fields = [
+            "contract_title",
             'creator',
             'contract_amount',
             "contract_type",
@@ -48,6 +49,12 @@ class ContractForm(forms.ModelForm):
 
     def clean_vendor(self):
         data = self.cleaned_data['vendor']
+        if data == "":
+            raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
+        return data
+
+    def clean_contract_title(self):
+        data = self.cleaned_data['contract_title']
         if data == "":
             raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
         return data

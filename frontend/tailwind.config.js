@@ -43,7 +43,7 @@ module.exports = {
         debug: "#636363",
         warning: '#ffab2d',
         primary: "#1070CA",
-        info: "#1070CA",
+        info: "#56A4EC",
         danger: '#FF0000',
         success: "#34A853",
       },

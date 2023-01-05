@@ -11,7 +11,7 @@ html {
 }
 
 body {
-  @apply overflow-x-hidden overflow-y-auto bg-body text-black font-poppins scrollbar-hide w-screen scrollbar-track-warning scrollbar-thumb-black min-h-screen;
+  @apply overflow-x-hidden overflow-y-auto bg-body text-black font-poppins scrollbar-thin w-screen scrollbar-track-warning scrollbar-thumb-black min-h-screen;
 }
 
 .dot-gray {

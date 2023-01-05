@@ -57,7 +57,7 @@ urlpatterns = [
     path(
         "jet/dashboard/", include("jet.dashboard.urls", "jet-dashboard")
     ),  # Django JET dashboard URLS
-    path("admin/", include("admin_honeypot.urls", "admin_honeypot")),
+    # path("admin/", include("admin_honeypot.urls", "admin_honeypot")),
     path(settings.ADMIN_URL, admin.site.urls),
     path(settings.ADMIN_DOC_URL, include("django.contrib.admindocs.urls")),
 

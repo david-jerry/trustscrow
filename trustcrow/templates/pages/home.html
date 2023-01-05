@@ -15,11 +15,11 @@
 
       <h1 class="text-4xl font-bold md:text-6xl max-w-xl">
         The <span
-          class="duration-500 cursor-pointer hover:underline hover:decoration-debug text-warning italic">Smarter</span>
-        Way to do Business Online.
+          class="duration-500 cursor-pointer hover:underline hover:decoration-debug text-warning italic">Safest Way</span>
+        to buy and sell Online.
       </h1>
-      <p class="text-debug font-normal text-sm leading loose max-w-md">Shop online from anywhere in world, make payments
-        only for the products you want and complies with the terms of agreement between you and the vendor.
+      <p class="text-debug font-normal text-sm leading loose max-w-md">
+        Shop safely online, pay only for what you want, and protect your interest with lagally binding agreement
       </p>
 
       <div x-show.transition="step === 'complete'" x-cloak="step !== 'complete'">
@@ -106,7 +106,7 @@
                     <input type="radio" id="id_creator" name="creator" value="Vendor" x-model="formData.creator"
                       class="form-radio focus:outline-none focus:shadow-outline" />
                   </div>
-                  <div class="select-none text-gray-700">Vendor</div>
+                  <div class="select-none text-gray-700">Seller</div>
                 </label>
 
                 <label
@@ -115,7 +115,7 @@
                     <input type="radio" id="id_creator" name="creator" value="Contractor" x-model="formData.creator"
                       class="form-radio focus:outline-none focus:shadow-outline" />
                   </div>
-                  <div class="select-none text-gray-700">Contractor</div>
+                  <div class="select-none text-gray-700">Buyer</div>
                 </label>
               </div>
               <span id="error-wrapper-creator" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
@@ -125,7 +125,7 @@
                 for?</span>
 
               <div class="flex space-x-4 mx-auto">
-                <label
+                <label @click="service = true"
                   class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
                   <div class="text-teal-600 mr-3">
                     <input type="radio" name="contract_type" value="SERVICE" x-model="formData.contract_type"
@@ -134,7 +134,7 @@
                   <div class="select-none text-gray-700">Services</div>
                 </label>
 
-                <label
+                <label @click="service = false"
                   class="flex justify-start items-center text-truncate rounded-lg bg-white pl-4 pr-6 py-3 shadow-xl hover:shadow-md duration-300">
                   <div class="text-teal-600 mr-3">
                     <input type="radio" name="contract_type"value="PRODUCT" x-model="formData.contract_type"
@@ -153,8 +153,7 @@
               <span id="error-wrapper-amount" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_vendor"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
-                Contract Amount</label>
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Product / Service Amount</label>
             </div>
             <div class="relative">
               <input x-model="formData.localization" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="localization" id="id_localization"
@@ -163,17 +162,17 @@
               <span id="error-wrapper-localization" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_localization"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
-                Delivery Location / Service Location</label>
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
+                Delivery Location</label>
             </div>
 
-            <div class="hidden" :class="{'hidden':formData.contract_type == 'SERVICE', 'relative':formData.contract_type=='PRODUCT', 'hidden':formData.contract_type==''}">
-              <input x-model="formData.title" type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="title" id="id_title"
+            <div class="relative">
+              <input x-model="formData.contract_title" :type="!service ? 'hidden' : 'text'" x-on:keydown="bpop=false; vpop=false" required name="contract_title" id="id_contract_title"
                 class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
                 placeholder=" " />
-              <span id="error-wrapper-title" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+              <span id="error-wrapper-contract_title" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
-              <label for="id_title"
+              <label for="id_contract_title" :class="{'hidden':!service, 'absolute':service}"
                 class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
                 Contract Title / Service Title</label>
             </div>
@@ -191,7 +190,7 @@
               <span id="error-wrapper-vendor_email"
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
               <label for="id_vendor_email"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Seller's
                 Email</label>
 
               <div id="vresult" class="w-full z-20 left-0 right-0 absolute min-h-0 max-h-44 overflow-y-auto scrollbar-thin bg-gray-100 shadow-md rounded-xl p-0 top-14 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -203,7 +202,7 @@
               <span id="error-wrapper-vendor" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_vendor"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Seller's
                 Name / Company Name</label>
             </div>
             <div class="relative">
@@ -214,7 +213,7 @@
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_vendor_phone"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Seller's
                 Phone</label>
             </div>
             <div class="relative">
@@ -225,7 +224,7 @@
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_vendor_address"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Vendors
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Seller's
                 Address</label>
             </div>
           </div>
@@ -239,7 +238,7 @@
               <span id="error-wrapper-buyer_email"
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
               <label for="id_buyer_email"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
                 Email</label>
 
               <div id="bresult" class="w-full z-20 left-0 right-0 absolute min-h-0 max-h-44 overflow-y-auto scrollbar-thin bg-gray-100 shadow-md rounded-xl p-0 top-14 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -251,7 +250,7 @@
               <span id="error-wrapper-buyer" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_buyer"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
                 Name</label>
             </div>
             <div class="relative">
@@ -262,7 +261,7 @@
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_buyer_phone"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
                 Phone</label>
             </div>
             <div class="relative">
@@ -273,7 +272,7 @@
                 class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
               <label for="id_buyer_address"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyers
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
                 Address</label>
             </div>
           </div>
@@ -324,7 +323,53 @@
             </button>
 
             <button :disabled="formError===true; loading" id="next"
-              x-show="step < 4" @click="next"
+              x-show="step < 2" @click="next"
+              class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
+              <div role="status" x-show="loading">
+                <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
+                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
+              </div>
+              <span class="block">Continue</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+                <path fill-rule="evenodd"
+                  d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <button :disabled="formError===true; loading" id="next"
+              x-show="step < 3 && step > 1" @click="next2"
+              class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
+              <div role="status" x-show="loading">
+                <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
+                  viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                    fill="currentColor" />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                    fill="currentFill" />
+                </svg>
+                <span class="sr-only">Loading...</span>
+              </div>
+              <span class="block">Continue</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 flex-none">
+                <path fill-rule="evenodd"
+                  d="M16.72 7.72a.75.75 0 011.06 0l3.75 3.75a.75.75 0 010 1.06l-3.75 3.75a.75.75 0 11-1.06-1.06l2.47-2.47H3a.75.75 0 010-1.5h16.19l-2.47-2.47a.75.75 0 010-1.06z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+
+            <button :disabled="formError===true; loading" id="next"
+              x-show="step < 4 && step > 2" @click="next3"
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">
                 <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
@@ -347,7 +392,7 @@
             </button>
 
             <button :disabled="loading" id="next"
-            x-show="step == 4" @click="next2"
+            x-show="step == 4" @click="next4"
             class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
             <div role="status" x-show="loading">
               <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"

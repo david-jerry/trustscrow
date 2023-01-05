@@ -25,7 +25,7 @@ def order_post_save(sender, instance, created, **kwargs):
         product = Products.objects.create(
             p_type=instance.contract.SERVICE,
             vendor=user,
-            title=instance.contract.title.title(),
+            title=instance.contract.contract_title.title(),
             detail=instance.contract.terms_agreement,
             price=instance.contract.contract_amount,
         )

@@ -83,7 +83,7 @@ DJANGO_APPS = [
     'jet.dashboard',
     'jet',
 
-    "admin_honeypot",
+    # "admin_honeypot",
 
     "django.contrib.auth",
     "django.contrib.contenttypes",

@@ -242,7 +242,7 @@ class ContractCreateView(FormView):
         if terms_for_termination != "" and terms_agreement != "":
             contract = Contract.objects.create(
                 creator = request.POST.get('creator'),
-                title = request.POST.get('title'),
+                contract_title = request.POST.get('contract_title') if request.POST.get('contract_title') else None,
                 contract_type = request.POST.get('contract_type'),
                 vendor = request.POST.get('vendor'),
                 vendor_email = request.POST.get('vendor_email'),

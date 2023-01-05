@@ -17,9 +17,10 @@ export default function ContractForm() {
     butocomplete: true,
     step: 1,
     formError: true,
-    service: false,
+    service: null,
     formData: {
         creator: "",
+        contract_title: "",
         contract_type: "",
         amount: 0,
         localization: "",
@@ -39,19 +40,65 @@ export default function ContractForm() {
     },
 
     next() {
-      if(this.formError===false){
-        this.validate();
-        return this.formError = true;
+      if (this.service) {
+        if(this.formData.creator.length > 1 && this.formData.localization.length > 1 && this.formData.contract_title.length > 1 && this.formData.contract_type.length > 1 && this.formData.amount > 100){
+          this.step++;
+        }
+      } else {
+        if(this.formData.creator.length > 1 && this.formData.localization.length > 1 && this.formData.contract_type.length > 1 && this.formData.amount > 100){
+          this.step++;
+        } else {
+          iziToast.error({
+            title: "Form Error",
+            balloon: true,
+            position: "topRight",
+            animateInside: true,
+            message: "Fill all fields here accurately.",
+          });
+        }
+      }
+    },
+
+    next2() {
+      if(this.formData.vendor.length > 1 &&  this.formData.vendor_phone.length > 1 && this.formData.vendor_email.length > 1 && this.formData.vendor_address.length > 1){
+        this.step++;
       }
       return;
     },
 
-    next2() {
-      this.step++;
+    next3() {
+      if(this.formData.buyer.length > 1 &&  this.formData.buyer_phone.length > 1 && this.formData.buyer_email.length > 1 && this.formData.buyer_address.length > 1){
+        this.step++;
+      } else {
+        iziToast.error({
+          title: "Form Error",
+          balloon: true,
+          position: "topRight",
+          animateInside: true,
+          message: "Fill all fields here accurately.",
+        });
+      }
     },
 
+    next4() {
+      let agreement = window.parent.tinymce.get("id_terms_agreement").getContent();
+      console.log(agreement);
+      console.log(window.parent.tinymce.get("id_terms_agreement").getContent());
+      if(agreement.length > 1){
+        this.step++;
+      } else {
+        iziToast.error({
+          title: "Form Error",
+          balloon: true,
+          position: "topRight",
+          animateInside: true,
+          message: "You need to add the agreement you had entered with the seller/buyer.",
+        });
+      }
+    },
+
+
     back() {
-      this.formError = false;
       this.step--;
     },
 
@@ -103,128 +150,141 @@ export default function ContractForm() {
     },
 
     async submitContract() {
-      this.loading = true;
+      let agreement = window.parent.tinymce.get("id_terms_for_termination").getContent();
+      if(agreement.length > 1){
+        this.loading = true;
 
-      const formElement = this.$refs.form;
-      const action = formElement.action;
-      const csrf = formElement.dataset.csrf;
-      let data = new FormData(formElement);
+        const formElement = this.$refs.form;
+        const action = formElement.action;
+        const csrf = formElement.dataset.csrf;
+        let data = new FormData(formElement);
 
 
-      formElement.querySelectorAll("[name]").forEach((fieldElement) => {
-        if (fieldElement.type !== "textarea" && fieldElement.type !== 'radio') {
-            data.append(fieldElement.name, fieldElement.value);
-        }
-
-        if (fieldElement.type === "textarea") {
-          let textarea = fieldElement.id;
-          console.log(
-            "textarea content: ",
-            window.parent.tinymce.get(textarea).getContent()
-          );
-          data.append(
-            fieldElement.name,
-            window.parent.tinymce.get(textarea).getContent()
-          );
-        }
-
-        if (fieldElement.type === 'radio') {
-          if(fieldElement.name === 'creator'){
-            console.log(this.formData.creator);
-            data.append('creator', this.formData.creator);
+        formElement.querySelectorAll("[name]").forEach((fieldElement) => {
+          if (fieldElement.type !== "textarea" && fieldElement.type !== 'radio') {
+              data.append(fieldElement.name, fieldElement.value);
           }
-          if(fieldElement.name === 'contract_type'){
-            console.log(this.formData.contract_type);
-            data.append('contract_type', this.formData.contract_type);
+
+          if (fieldElement.type === "textarea") {
+            let textarea = fieldElement.id;
+            console.log(
+              "textarea content: ",
+              window.parent.tinymce.get(textarea).getContent()
+            );
+            data.append(
+              fieldElement.name,
+              window.parent.tinymce.get(textarea).getContent()
+            );
           }
-        }
-      });
 
-      console.dir(data);
+          if (fieldElement.type === 'radio') {
+            if(fieldElement.name === 'creator'){
+              console.log(this.formData.creator);
+              data.append('creator', this.formData.creator);
+            }
+            if(fieldElement.name === 'contract_type'){
+              console.log(this.formData.contract_type);
+              data.append('contract_type', this.formData.contract_type);
+            }
+          }
+        });
 
-      await axios
-      .post(action, data, {
-        headers: {
-          "X-CSRFToken": csrf,
-        },
-      })
-      .then(async function (response) {
-        if (response.status === 200 || response.status === 201) {
-          await iziToast.success({
-            title: response.data.title,
-            balloon: true,
-            position: "topRight",
-            animateInside: true,
-            message: response.data.message,
-          });
-        }
-        if (response.data.amount && response.data.pk && response.data.email && response.data.ref) {
-          const handler = new PaystackPop();
-          await handler.newTransaction({
-            key: response.data.pk,
-            // key: "pk_test_e3d5e0bcf09cb129ba34480db85b925826242eb8",
-            email: response.data.email,
-            amount: response.data.amount * 100,
-            currency: "NGN",
-            ref: response.data.ref,
-            onSuccess: async (res) => {
-              console.dir(res);
-              const loc = `${window.location.origin}/escrow/transaction/verify/${res.reference}/${res.status}/`;
-              await axios.get(loc)
-              .then(async (response) => {
+        console.dir(data);
+
+        await axios
+        .post(action, data, {
+          headers: {
+            "X-CSRFToken": csrf,
+          },
+        })
+        .then(async function (response) {
+          if (response.status === 200 || response.status === 201) {
+            await iziToast.success({
+              title: response.data.title,
+              balloon: true,
+              position: "topRight",
+              animateInside: true,
+              message: response.data.message,
+            });
+          }
+          if (response.data.amount && response.data.pk && response.data.email && response.data.ref) {
+            const handler = new PaystackPop();
+            await handler.newTransaction({
+              key: response.data.pk,
+              // key: "pk_test_e3d5e0bcf09cb129ba34480db85b925826242eb8",
+              email: response.data.email,
+              amount: response.data.amount * 100,
+              currency: "NGN",
+              ref: response.data.ref,
+              onSuccess: async (res) => {
+                console.dir(res);
+                const loc = `${window.location.origin}/escrow/transaction/verify/${res.reference}/${res.status}/`;
+                await axios.get(loc)
+                .then(async (response) => {
+                  await iziToast.info({
+                    title: response.data.title,
+                    balloon: true,
+                    position: "topRight",
+                    animateInside: true,
+                    message: response.data.message,
+                  });
+                  await sleep(3500);
+                  if (response.data.slug && res.message === "Approved") {
+                    return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
+                  }
+                });
+              },
+              onCancle: async function() {
                 await iziToast.info({
-                  title: response.data.title,
+                  title: "TRANSACTION FAILED",
                   balloon: true,
                   position: "topRight",
                   animateInside: true,
-                  message: response.data.message,
+                  message: "This transaction could not be completed at the moment. Please try again!",
                 });
-                await sleep(3500);
-                if (response.data.slug && res.message === "Approved") {
-                  return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
-                }
-              });
-            },
-            onCancle: async function() {
-              await iziToast.info({
-                title: "TRANSACTION FAILED",
-                balloon: true,
-                position: "topRight",
-                animateInside: true,
-                message: "This transaction could not be completed at the moment. Please try again!",
-              });
-              return window.location.reload();
+                return window.location.reload();
+              }
+            });
+          } else {
+            if (response.data.slug) {
+              return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
             }
-          });
-        } else {
-          if (response.data.slug) {
-            return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
           }
-        }
-      })
-      .catch(async function (error) {
-        if (error.response && error.response.status === 403) {
+        })
+        .catch(async function (error) {
+          if (error.response && error.response.status === 403) {
+            await iziToast.error({
+              title: error.response.data.title,
+              balloon: true,
+              position: "topRight",
+              animateInside: true,
+              message: error.response.data.message,
+            });
+          }
+
           await iziToast.error({
-            title: error.response.data.title,
+            title: "Form Error",
             balloon: true,
             position: "topRight",
             animateInside: true,
-            message: error.response.data.message,
+            message: error.message,
           });
-        }
+          await sleep(3500); //wait 1 sec and then htmx redirect get
+          return; // window.location.reload();
+        });
 
+        this.loading = false;
+
+      } else {
         await iziToast.error({
           title: "Form Error",
           balloon: true,
           position: "topRight",
           animateInside: true,
-          message: error.message,
+          message: "You need to input a reason for termination.",
         });
-        await sleep(3500); //wait 1 sec and then htmx redirect get
-        return window.location.reload();
-      });
+      }
 
-      this.loading = false;
     },
 
     async retryPayment(ref) {

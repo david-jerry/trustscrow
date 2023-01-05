@@ -59,7 +59,7 @@ class Contract(TimeStampedModel):
     contract_type = CharField(_("Contract Type"), choices=CON_TYPE, default=PRODUCT, max_length=255)
     slug = SlugField(_("Slug"), blank=True, max_length=500)
 
-    title = CharField(_("Contract Title"), max_length=500, blank=True, null=True)
+    contract_title = CharField(_("Contract Title"), max_length=500, blank=True, null=True)
     terms_agreement = HTMLField()
     terms_for_termination = HTMLField()
 
