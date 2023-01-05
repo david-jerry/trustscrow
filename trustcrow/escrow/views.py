@@ -13,6 +13,7 @@ from django.contrib.auth import get_user_model
 from config.mixins import LoginRequiredMixin, StaffRequiredMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import authenticate, login
 from django.views.generic import (
     DetailView,
     RedirectView,
@@ -272,6 +273,8 @@ class ContractCreateView(FormView):
             username = User.objects.get(email=request.POST.get('vendor_email')).username
 
             if request.POST.get('creator') == "Contractor":
+                buyer.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(self.request, buyer)
                 LOGGER.info(f"{slug} + ' ' + {ref} + ' ' + {pk} + ' ' + {amount} + ' ' + {email} + ' ' + {username} ")
                 return JsonResponse(
                     status=201,
@@ -286,17 +289,20 @@ class ContractCreateView(FormView):
                         'email': email
                     },
                 )
-            return JsonResponse(
-                status=201,
-                data={
-                    'username': username,
-                    "message": "You have successfully created a new Contract",
-                    "title": "New Contract Created",
-                    'slug': slug,
-                    'amount': amount,
-                    'email': email
-                },
-            )
+            else:
+                vendor.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(self.request, vendor)
+                return JsonResponse(
+                    status=201,
+                    data={
+                        'username': username,
+                        "message": "You have successfully created a new Contract",
+                        "title": "New Contract Created",
+                        'slug': slug,
+                        'amount': amount,
+                        'email': email
+                    },
+                )
         else:
             return JsonResponse(
                 status=403,
@@ -445,9 +451,11 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = "slug"
 
     def get_object(self):
-        if not Contract.objects.filter(Q(slug__iexact=self.kwargs["slug"]) | Q(buyer_email__iexact=self.request.user.email) | Q(vendor_email__iexact=self.request.user.email)).exists() or not self.request.user.is_superuser:
+        LOGGER.info(Contract.objects.filter(buyer_email=self.request.user.email,slug=self.kwargs['slug']).exists())
+        if Contract.objects.filter(vendor_email=self.request.user.email,slug=self.kwargs['slug']).exists() or Contract.objects.filter(buyer_email=self.request.user.email,slug=self.kwargs['slug']).exists() or self.request.user.is_superuser:
+            return Contract.objects.get(slug=self.kwargs['slug'])
+        else:
             raise PermissionDenied()
-        return Contract.objects.get(slug=self.kwargs['slug'])
 
 contract_detail = ContractDetailView.as_view()
 

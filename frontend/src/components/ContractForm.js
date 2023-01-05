@@ -245,10 +245,8 @@ export default function ContractForm() {
                 return window.location.reload();
               }
             });
-          } else {
-            if (response.data.slug) {
+          } else if (response.data.slug) {
               return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
-            }
           }
         })
         .catch(async function (error) {
