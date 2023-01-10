@@ -149,7 +149,7 @@ if SES:
         },
     }
 else:
-    EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
     EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
     EMAIL_HOST_USER = env("EMAIL_HOST_USER", default='mail@gmail.com')# sendgrid
