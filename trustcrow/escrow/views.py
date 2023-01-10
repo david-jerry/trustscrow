@@ -62,7 +62,7 @@ def retry_payment(request, ref_link):
         <br>
         Please proceed in delivering as agreed between you too.
         <br><br>
-        <a href="https://trustscrow.com/{transaction.contract.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com{transaction.contract.get_email_url()}">Contract Link</a>
         """
         send_html_mail(subject=f"PAID ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
 
@@ -75,7 +75,7 @@ def retry_payment(request, ref_link):
         <br>
         Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
         <br><br>
-        <a href="https://trustscrow.com/{transaction.contract.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com{transaction.contract.get_email_url()}">Contract Link</a>
         """
         send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
         return JsonResponse(
@@ -371,7 +371,7 @@ def verify_transaction(request, ref, status):
     <br>
     Please proceed in delivering as agreed between you too.
     <br><br>
-    <a href="https://trustscrow.com/{contract.get_email_url()}">Contract Link</a>
+    <a href="https://trustscrow.com{contract.get_email_url()}">Contract Link</a>
     """
     send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
 
@@ -384,7 +384,7 @@ def verify_transaction(request, ref, status):
     <br>
     Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
     <br><br>
-    <a href="https://trustscrow.com/{contract.get_email_url()}">Contract Link</a>
+    <a href="https://trustscrow.com{contract.get_email_url()}">Contract Link</a>
     """
     send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
 
