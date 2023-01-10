@@ -148,7 +148,14 @@ if SES:
             "region_name": env("DJANGO_AWS_S3_REGION_NAME", default="us-east-1"),
         },
     }
+else:
+    EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
 
+    EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER", default='mail@gmail.com')# sendgrid
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="password.")
+    EMAIL_PORT = env("EMAIL_HOST_PORT", default="465")
+    EMAIL_USE_SSL = True
 
 # LOGGING
 # ------------------------------------------------------------------------------

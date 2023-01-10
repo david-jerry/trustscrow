@@ -322,7 +322,7 @@
               <span class="block">Back</span>
             </button>
 
-            <button :disabled="formError===true; loading" id="next"
+            <button id="next"
               x-show="step < 2" @click="next"
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">
@@ -345,7 +345,7 @@
               </svg>
             </button>
 
-            <button :disabled="formError===true; loading" id="next"
+            <button id="next2"
               x-show="step < 3 && step > 1" @click="next2"
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">
@@ -368,7 +368,7 @@
               </svg>
             </button>
 
-            <button :disabled="formError===true; loading" id="next"
+            <button id="next3"
               x-show="step < 4 && step > 2" @click="next3"
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">

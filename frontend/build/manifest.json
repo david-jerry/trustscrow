@@ -1,7 +1,7 @@
 {
-  "app.css": "/static/css/app.5fb3cbd73d7b8172db55.css",
-  "app.js": "/static/js/app.10db99e8.js",
-  "app2.js": "/static/js/app2.33d3986e.js",
+  "app.css": "/static/css/app.css",
+  "app.js": "/static/js/app.js",
+  "app2.js": "/static/js/app2.js",
   "assets/android-chrome-144x144.png": "/static/assets/android-chrome-144x144.png",
   "assets/android-chrome-192x192.png": "/static/assets/android-chrome-192x192.png",
   "assets/android-chrome-256x256.png": "/static/assets/android-chrome-256x256.png",
@@ -41,42 +41,34 @@
   "assets/mstile-70x70.png": "/static/assets/mstile-70x70.png",
   "assets/yandex-browser-50x50.png": "/static/assets/yandex-browser-50x50.png",
   "assets/yandex-browser-manifest.json": "/static/assets/yandex-browser-manifest.json",
-  "css/13.1e3be9d05835c4664ad7.css": "/static/css/13.1e3be9d05835c4664ad7.css",
-  "css/13.1e3be9d05835c4664ad7.css.map": "/static/css/13.1e3be9d05835c4664ad7.css.map",
-  "css/app.5fb3cbd73d7b8172db55.css.map": "/static/css/app.5fb3cbd73d7b8172db55.css.map",
+  "css/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.css": "/static/css/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.css",
   "entrypoints": {
     "app": {
       "assets": {
         "js": [
-          "/static/js/runtime.8a8dc1e8.js",
-          "/static/js/13.ec0fe475.js",
-          "/static/js/app.10db99e8.js"
+          "/static/js/runtime.js",
+          "/static/js/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.js",
+          "/static/js/app.js"
         ],
         "css": [
-          "/static/css/13.1e3be9d05835c4664ad7.css",
-          "/static/css/app.5fb3cbd73d7b8172db55.css"
+          "/static/css/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.css",
+          "/static/css/app.css"
         ]
       }
     },
     "app2": {
       "assets": {
         "js": [
-          "/static/js/runtime.8a8dc1e8.js",
-          "/static/js/app2.33d3986e.js"
+          "/static/js/runtime.js",
+          "/static/js/app2.js"
         ]
       }
     }
   },
   "index.html": "/static/index.html",
-  "js/13.ec0fe475.js": "/static/js/13.ec0fe475.js",
-  "js/13.ec0fe475.js.LICENSE.txt": "/static/js/13.ec0fe475.js.LICENSE.txt",
-  "js/13.ec0fe475.js.map": "/static/js/13.ec0fe475.js.map",
-  "js/app.10db99e8.js.map": "/static/js/app.10db99e8.js.map",
-  "js/app2.33d3986e.js.map": "/static/js/app2.33d3986e.js.map",
-  "js/runtime.8a8dc1e8.js.map": "/static/js/runtime.8a8dc1e8.js.map",
-  "runtime.js": "/static/js/runtime.8a8dc1e8.js",
+  "js/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.js": "/static/js/vendors-node_modules_alpinejs_intersect_dist_module_esm_js-node_modules_lottiefiles_lottie-pl-6dc5d1.js",
+  "runtime.js": "/static/js/runtime.js",
   "sw.js": "/static/sw.js",
-  "sw.js.map": "/static/sw.js.map",
   "vendors/.gitkeep": "/static/vendors/.gitkeep",
   "vendors/images/.gitkeep": "/static/vendors/images/.gitkeep",
   "vendors/images/403.svg": "/static/vendors/images/403.svg",
