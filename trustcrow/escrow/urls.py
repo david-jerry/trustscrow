@@ -15,6 +15,7 @@ from trustcrow.escrow.views import (
     add_product_form,
 
     contract_detail,
+    contract_detail2,
     list_contracts,
     search_contracts,
     verify_transaction,
@@ -45,6 +46,7 @@ urlpatterns = [
     path("contract/list/", view=list_contracts, name="list_contracts"),
     path("contract/list/search/", view=search_contracts, name="search_contracts"),
     path("contract/detail/<slug>/", view=contract_detail, name="contract_detail"),
+    path("contract/detail/<slug>/<username>/", view=contract_detail2, name="contract_detail2"),
 
     # customers
     path("customers/list/", view=list_customers, name="list_customers"),

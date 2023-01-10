@@ -10,6 +10,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.contrib.auth import get_user_model
+from config.commons import send_html_mail
 from config.mixins import LoginRequiredMixin, StaffRequiredMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -52,7 +53,31 @@ def retry_payment(request, ref_link):
         amount = transaction.total_cost
         email = transaction.contract.buyer_email
         LOGGER.info("Vendor and Buyer already exists")
+        msg = f"""
+        Greetings {transaction.contract.vendor.title()}
+        <br>
+        <br>
+        {transaction.contract.buyer.title()} made the payment for the contract between you too.
+        <br>
+        <br>
+        Please proceed in delivering as agreed between you too.
+        <br><br>
+        <a href="https://trustscrow.com/{transaction.contract.get_email_url()}">Contract Link</a>
+        """
+        send_html_mail(subject=f"PAID ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
 
+        msg2 = f"""
+        Greetings {transaction.contract.buyer.title()}
+        <br>
+        <br>
+        You have successfully made payment of the sum N{round(transaction.contract.contract.amount, 2)}
+        <br>
+        <br>
+        Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
+        <br><br>
+        <a href="https://trustscrow.com/{transaction.contract.get_email_url()}">Contract Link</a>
+        """
+        send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
         return JsonResponse(
                 status=200,
                 data={
@@ -254,8 +279,8 @@ class ContractCreateView(FormView):
                 buyer_email = request.POST.get('buyer_email'),
                 buyer_phone = request.POST.get('buyer_phone'),
                 buyer_address = request.POST.get('buyer_address'),
-                terms_agreement = request.POST.get('terms_agreement'),
-                terms_for_termination = request.POST.get('terms_for_termination')
+                # terms_agreement = request.POST.get('terms_agreement'),
+                # terms_for_termination = request.POST.get('terms_for_termination')
             )
 
             vendor = User.objects.get(email=request.POST.get('vendor_email'))
@@ -271,6 +296,8 @@ class ContractCreateView(FormView):
             amount = request.POST.get('amount')
             email = request.POST.get('buyer_email')
             username = User.objects.get(email=request.POST.get('vendor_email')).username
+
+            url = reverse('escrow:contract_detail', kwargs={'slug':slug})
 
             if request.POST.get('creator') == "Contractor":
                 buyer.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -335,6 +362,32 @@ def verify_transaction(request, ref, status):
     Transactions.objects.filter(contract=contract, ref_link=ref).update(
         transaction_status=status.upper()
     )
+    msg = f"""
+    Greetings {contract.vendor.title()}
+    <br>
+    <br>
+    {contract.buyer.title()} Has made payments for the contract thus approving the contract between you both.
+    <br>
+    <br>
+    Please proceed in delivering as agreed between you too.
+    <br><br>
+    <a href="https://trustscrow.com/{contract.get_email_url()}">Contract Link</a>
+    """
+    send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
+
+    msg2 = f"""
+    Greetings {contract.buyer.title()}
+    <br>
+    <br>
+    You have successfully approved the contract between yourself and {contract.vendor.title()} worth the sum of {round(contract.contract_amount, 2)}
+    <br>
+    <br>
+    Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
+    <br><br>
+    <a href="https://trustscrow.com/{contract.get_email_url()}">Contract Link</a>
+    """
+    send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
+
     return JsonResponse(status=200, data={'title':f"TRANSACTION {status.upper()}", 'message':f"You transaction is {status.upper()}", 'slug':contract.slug})
 
 
@@ -460,6 +513,14 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 contract_detail = ContractDetailView.as_view()
 
 
+def contract_detail2(request, *args, **kwargs):
+    username = kwargs['username']
+    slug = kwargs['slug']
+    user = User.objects.get(username=username)
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    login(request, user)
+    contract = Contract.objects.get(slug=slug)
+    return render(request, 'escrow/detail.html', context={"object":contract})
 
 
 

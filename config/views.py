@@ -46,21 +46,34 @@ def mark_as_read(request, id):
     return JsonResponse(status=200, data={'message':"Message Read"})
 
 class SupportCreateView(FormView):
+    form_class = ContactForm
 
-    def get(self, request, *args, **kwargs):
-        form = ContactForm()
-        context = {'form':form}
-        return render(request, 'pages/contact.html', context=context)
+    # template_engine = "pages/contact.html"
+    # def get(self, request, *args, **kwargs):
+    #     form = ContactForm()
+    #     context = {'form':form}
+    #     return render(request, 'pages/contact.html', context=context)
 
     def post(self, request, *args, **kwargs):
         if "__field_name__" in request.POST:
             return self.validate_field(request)
 
         form = ContactForm(data=request.POST)
-        if form.is_valid():
-            self.send_mail(valid_data=form.cleaned_data)
+        LOGGER.info(form.is_valid())
+        if request.POST.get('name') != "":
+            msg = f"""
+            Dear Support,
+            <br>
+            <br>
+            <strong>Mail From: </strong> {request.POST['name'].title()}<br><strong>Phone: </strong>{request.POST['phone']} <br><strong>Email: </strong>{request.POST['email']}
+            <br>
+            <br>
+            <strong> {request.POST['message']}</strong>
+            <br>
+            """
+            send_html_mail(subject=f"SUPPORT MAIL [{request.POST['name'].title()}]", html_content=msg, from_email="TRUSTSCROW SUPPORT <noreply@trustscrow.com>", recipient_list=['support@trustscrow.com'])
             return JsonResponse(status=201, data={"message":"Support Mail Successfully Sent", "title":"Support Mail"})
-        return super().post(request, *args, **kwargs)
+        return JsonResponse(status=400, data={"message":"Error with form"})
 
     def validate_field(self, request):
         field_name = request.POST.get("__field_name__")
@@ -70,19 +83,19 @@ class SupportCreateView(FormView):
             "errors": form.errors.get(field_name, []),
         })
 
-    def send_mail(self, valid_data):
-        msg = f"""
-        Dear Support,
-        <br>
-        <br>
-        <strong>Mail From: </strong> {valid_data['name'].title()}<br><strong>Phone: </strong>{valid_data['phone']} <br><strong>Email: </strong>{valid_data['email']}
-        <br>
-        <br>
-        <strong> {valid_data['message']}</strong>
-        <br>
-        """
-        send_html_mail(subject=f"SUPPORT MAIL [{valid_data['name'].title()}]", html_content=msg, from_email="TRUSTSCROW SUPPORT <noreply@trustscrow.com>", recipient_list=['support@trustscrow.com'])
-        pass
+    # def send_mail(self, valid_data):
+    #     msg = f"""
+    #     Dear Support,
+    #     <br>
+    #     <br>
+    #     <strong>Mail From: </strong> {valid_data['name'].title()}<br><strong>Phone: </strong>{valid_data['phone']} <br><strong>Email: </strong>{valid_data['email']}
+    #     <br>
+    #     <br>
+    #     <strong> {valid_data['message']}</strong>
+    #     <br>
+    #     """
+    #     send_html_mail(subject=f"SUPPORT MAIL [{valid_data['name'].title()}]", html_content=msg, from_email="TRUSTSCROW SUPPORT <noreply@trustscrow.com>", recipient_list=['support@trustscrow.com'])
+    #     pass
 
 support = SupportCreateView.as_view()
 

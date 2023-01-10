@@ -35,7 +35,7 @@ urlpatterns = [
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
     path(
-        "contact/", support, name="contact"
+        "contact/", TemplateView.as_view(template_name="pages/contact.html"), name="contact"
     ),
     path(
         "products/vendify/", TemplateView.as_view(template_name="pages/vendify.html"), name="vendify"

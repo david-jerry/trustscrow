@@ -4,6 +4,7 @@ from threading import Thread
 from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.core.mail import EmailMultiAlternatives
+from django.http.response import HttpResponse, JsonResponse
 
 from allauth.account.adapter import DefaultAccountAdapter
 
@@ -25,6 +26,8 @@ class EmailThread(Thread):
 
 def send_html_mail(subject, html_content, from_email, recipient_list):
     EmailThread(subject, html_content, from_email, recipient_list).start()
+    pass
+    # return JsonResponse(status=201, data={"message":"Support Mail Successfully Sent", "title":"Support Mail"})
 
 
 

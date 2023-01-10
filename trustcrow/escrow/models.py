@@ -8,6 +8,7 @@ from django.db.models import (
     BooleanField,
     CharField,
     EmailField,
+    Q,
     SlugField,
     DateField,
     DecimalField,
@@ -175,6 +176,19 @@ class Contract(TimeStampedModel):
 
         """
         return reverse("escrow:contract_detail", kwargs={"slug": self.slug})
+
+    def get_email_url(self):
+        """Get url for contract's detail view.
+
+        Returns:
+            str: URL for contract detail.
+
+        """
+        if self.creator == self.VENDOR:
+            user = User.objects.get(email__iexact=self.buyer_email)
+        else:
+            user = User.objects.get(email__iexact=self.vendor_email)
+        return reverse("escrow:contract_detail2", kwargs={"slug": self.slug, 'username':user.username})
 
     def retry_payment(self):
         return reverse("escrow:retry_payment", kwargs={"slug": self.slug})

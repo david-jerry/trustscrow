@@ -31,7 +31,7 @@
 </section>
 
 <section id="contact" class="w-full px-4 md:px-24 xl:px-44 md:max-w-6xl md:mx-auto">
-  <form action="{% url 'contact' %}" data-csrf="{{csrf_token}}" class="space-y-5 bg-white p-6 rounded-xl shadow-md" x-data="ContactForm" x-ref="contactForm" @submit.prevent="submitForm" method="POST">
+  <form action="{% url 'support' %}" data-redirect="{% url 'contact' %}" data-csrf="{{csrf_token}}" class="space-y-5 bg-white p-6 rounded-xl shadow-md" x-data="ContactForm" x-ref="contactForm" method="POST">
     {% csrf_token %}
     <p class="text-center">We expect to hear from you soonest. As such we have created this form to espedite your enquiries thus making it easy to communicate your feelings and ideas directly to us.</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -73,7 +73,7 @@
       <label for="id_message"
         class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Message</label>
     </div>
-    <button type="submit" class="btn-warning btn-rounded">Submit</button>
+    <button type="button" @click="submitForm" class="btn-warning btn-rounded">Submit</button>
   </form>
 </section>
 

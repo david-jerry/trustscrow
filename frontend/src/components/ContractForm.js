@@ -60,7 +60,7 @@ export default function ContractForm() {
     },
 
     next2() {
-      if(this.formData.vendor.length > 1 &&  this.formData.vendor_phone.length > 1 && this.formData.vendor_email.length > 1 && this.formData.vendor_address.length > 1){
+      if(this.formData.vendor.length > 1 &&  this.formData.vendor_phone.length > 1 && this.formData.vendor_email.length > 1){
         this.step++;
       }
       return;
@@ -150,8 +150,9 @@ export default function ContractForm() {
     },
 
     async submitContract() {
-      let agreement = window.parent.tinymce.get("id_terms_for_termination").getContent();
-      if(agreement.length > 1){
+      let agreement = true;
+      // let agreement = window.parent.tinymce.get("id_terms_for_termination").getContent();
+      if(agreement){
         this.loading = true;
 
         const formElement = this.$refs.form;

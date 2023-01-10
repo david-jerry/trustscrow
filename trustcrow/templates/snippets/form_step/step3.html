@@ -1,0 +1,54 @@
+<div class="space-y-3" x-show.transition.in="step === 3">
+  <div class="relative">
+    <input x-model="formData.buyer_email"
+      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}"
+      type="email" hx-post="{% url 'users:all' %}" required hx-trigger="keyup changed delay:1s" hx-swap="outerHTML"
+      hx-target="#bresult" name="buyer_email" id="id_buyer_email"
+      class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+      placeholder=" " />
+    <span id="error-wrapper-buyer_email" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+    <label for="id_buyer_email"
+      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
+      Email</label>
+
+    <div id="bresult"
+      class="w-full z-20 left-0 right-0 absolute min-h-0 max-h-44 overflow-y-auto scrollbar-thin bg-gray-100 shadow-md rounded-xl p-0 top-14 grid grid-cols-1 md:grid-cols-2 gap-4">
+    </div>
+  </div>
+  <div class="relative">
+    <input x-model="formData.buyer"
+      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.name}}{% endif %}"
+      type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer" id="id_buyer"
+      class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+      placeholder=" " />
+    <span id="error-wrapper-buyer" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+    <label for="id_buyer"
+      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
+      Name</label>
+  </div>
+  <div class="relative">
+    <input x-model="formData.buyer_phone"
+      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.phone}}{% endif %}"
+      type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer_phone" id="id_buyer_phone"
+      class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+      placeholder=" " />
+    <span id="error-wrapper-buyer_phone" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+    <label for="id_buyer_phone"
+      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
+      Phone</label>
+  </div>
+  <div class="relative">
+    <input x-model="formData.buyer_address"
+      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.address}}{% endif %}"
+      type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer_address" id="id_buyer_address"
+      class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
+      placeholder=" " />
+    <span id="error-wrapper-buyer_address" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
+
+    <label for="id_buyer_address"
+      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
+      Address</label>
+  </div>
+</div>
