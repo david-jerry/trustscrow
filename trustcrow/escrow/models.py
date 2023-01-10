@@ -36,9 +36,10 @@ from model_utils.models import TimeStampedModel
 from countries_plus.models import Country
 from tinymce.models import HTMLField
 from django.contrib.auth import get_user_model
-# U = get_user_model()
+
+
 User = settings.AUTH_USER_MODEL
-# from trustcrow.users.models import User
+# from trustcrow.users.models import User as U
 
 class Contract(TimeStampedModel):
     SERVICE = "SERVICE"
@@ -185,9 +186,9 @@ class Contract(TimeStampedModel):
 
         """
         if self.creator == self.VENDOR:
-            user = User.objects.get(email__iexact=self.buyer_email)
+            user = get_user_model().objects.get(email=self.buyer_email)
         else:
-            user = User.objects.get(email__iexact=self.vendor_email)
+            user = get_user_model().objects.get(email=self.vendor_email)
         return reverse("escrow:contract_detail2", kwargs={"slug": self.slug, 'username':user.username})
 
     def retry_payment(self):
