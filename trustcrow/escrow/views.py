@@ -48,6 +48,9 @@ def retry_payment(request, ref_link):
     if request.method == "GET":
         transaction = Transactions.objects.get(ref_link=ref_link)
         slug = transaction.contract.slug
+        contract = transaction.contract
+        contract.buyer_approve = True
+        contract.save()
         ref = ref_link
         pk = settings.PAYSTACK_PUBLIC_KEY
         amount = transaction.total_cost
