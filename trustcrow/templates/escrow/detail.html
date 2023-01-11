@@ -192,12 +192,26 @@
                     <span class="block">Product Orders</span>
 
                     {% if object.creator == "Contractor" and object.buyer_email == request.user.email or object.creator == "Vendor" and object.vendor_email == request.user.email %}
-                    <span hx-get="{% url 'escrow:add_product_form' object.slug %}" hx-swap="afterbegin" hx-target="#mform" class="flex group items-center space-x-2 cursor-pointer ">
+                    <button hx-get="{% url 'escrow:add_product_form' object.slug %}" hx-swap="afterbegin" hx-target="#mform" class="flex group items-center space-x-2 cursor-pointer ">
                         <strong class="block text-sm">New</strong>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 group-hover:h-8 group-hover:w-8 duration-300">
                             <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
                         </svg>
-                    </span>
+                    </button>
+                    {% elif not obj.accepted and object.vendor_email == request.user.email %}
+                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
+                        <span class="block">Waiting</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                          <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    {% elif obj.accepted and object.vendor_email == request.user.email or obj.accepted and object.buyer_email == request.user.email %}
+                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
+                        <span class="block">Done</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </button>
                     {% endif %}
                   </p>
             </div>
@@ -273,7 +287,6 @@
                           <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    {% endif %}
                     {% elif obj.accepted and object.vendor_email == request.user.email or obj.accepted and object.buyer_email == request.user.email %}
                     <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
                         <span class="block">Done</span>
