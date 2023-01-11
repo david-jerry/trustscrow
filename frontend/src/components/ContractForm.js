@@ -315,6 +315,7 @@ export default function ContractForm() {
                 if (response.data.slug) {
                   return await window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
                 }
+                return window.location.reload();
               });
             },
             onCancle: async function() {
