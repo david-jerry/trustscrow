@@ -105,10 +105,10 @@ def retry_payment(request, ref_link):
 
 # Create your views here.
 
-def vendor_approve(request, slug, pk):
+def vendor_approve(request, slug):
     Contract.objects.filter(slug=slug).update(vendor_approve=True)
-    milestone = get_object_or_404(Milestones, id=pk)
-    return redirect("escrow:detail_milestone", pk=milestone.id)
+    # milestone = get_object_or_404(Milestones, id=pk)
+    return redirect("escrow:contract_detail", slug=slug)
 
 
 

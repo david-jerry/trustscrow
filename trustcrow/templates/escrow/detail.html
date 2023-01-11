@@ -310,7 +310,7 @@
         </div>
 
         {% if not object.vendor_approve and object.vendor_email == request.user.email %}
-        <button hx-get="{% url 'escrow:vendor_approve' object.slug %}" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve Contract</button>
+        <button hx-get="{% url 'escrow:vendor_approve' object.slug object.id %}" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve Contract</button>
         {% endif %}
 
         {% if not object.buyer_approve and object.buyer_email == request.user.email %}
