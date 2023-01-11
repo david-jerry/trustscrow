@@ -73,7 +73,7 @@ def retry_payment(request, ref_link):
         Greetings {transaction.contract.buyer.title()}
         <br>
         <br>
-        You have successfully made payment of the sum N{round(transaction.contract.contract.amount, 2)}
+        You have successfully made payment of the sum N{round(transaction.contract.amount, 2)}
         <br>
         <br>
         Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
