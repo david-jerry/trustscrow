@@ -181,11 +181,11 @@ class User(AbstractUser):
     @property
     def all_customers(self):
         if Contract.objects.filter(vendor_email=self.email).exists():
-            clients = Contract.objects.filter(vendor_email=self.email)
+            contracts = Contract.objects.filter(vendor_email=self.email)
             users = []
-            for user in clients:
-                u = User.objects.get(email = user.buyer_email)
-                if u:# and not User.objects.get(email = user.buyer_email) in users:
+            for contract in contracts:
+                u = User.objects.get(email = contract.buyer_email)
+                if not u in users:# and not User.objects.get(email = user.buyer_email) in users:
                     users.append(u)
             return users
         return None

@@ -4058,8 +4058,6 @@ input[type="range"]::-ms-fill-lower {
   height: 8rem;
 }.h-\[1\.75px\] {
   height: 1.75px;
-}.h-1\/4 {
-  height: 25%;
 }.max-h-80 {
   max-height: 20rem;
 }.max-h-fit {
@@ -4498,6 +4496,9 @@ input[type="range"]::-ms-fill-lower {
 }.bg-gray-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}.bg-primary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(16 112 202 / var(--tw-bg-opacity));
 }.bg-danger {
   --tw-bg-opacity: 1;
   background-color: rgb(255 0 0 / var(--tw-bg-opacity));
@@ -4537,8 +4538,6 @@ input[type="range"]::-ms-fill-lower {
   background-color: rgb(75 85 99 / var(--tw-bg-opacity));
 }.bg-white\/20 {
   background-color: rgb(255 255 255 / 0.2);
-}.bg-white\/10 {
-  background-color: rgb(255 255 255 / 0.1);
 }.fill-warning {
   fill: #ffab2d;
 }.fill-current {
@@ -4833,10 +4832,6 @@ input[type="range"]::-ms-fill-lower {
           filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }.backdrop-blur-md {
   --tw-backdrop-blur: blur(12px);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-}.backdrop-blur-sm {
-  --tw-backdrop-blur: blur(4px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
           backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }.transition {
@@ -5881,4 +5876,4 @@ input[type="range"]::-ms-fill-lower {
   }
 }
 
-/*# sourceMappingURL=app.c0670fdd5c194c945dc9.css.map*/
+/*# sourceMappingURL=app.7a3d6e0d4b90a55a40c4.css.map*/

@@ -183,7 +183,7 @@ def milestone_post_save(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Transactions)
 def transaction_post_save(sender, instance, created, **kwargs):
     if not instance.ref_link:
-        instance.ref_link = unique_ref_generator(instance)
+        instance.ref_link = unique_ref_generator(instance).lower()
         instance.save()
 
     if instance.transaction_status == instance.SUCCESS:

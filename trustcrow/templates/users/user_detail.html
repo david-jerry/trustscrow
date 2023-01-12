@@ -91,7 +91,7 @@
     </div>
 
     <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Transaction History</span> </strong> <a href="{% url 'escrow:list_contracts' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
-    <div class="w-full relative max-h-72 overflow-y-auto scrollbar-hidden scrollbar-hide btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden">
+    <div class="w-full relative max-h-72 overflow-y-auto scrollbar-hidden scrollbar-hide btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden space-y-3">
       {% for tx in request.user.all_transactions|slice:":7" %}
       <div class="flex items-center justify-between hover:shadow-md hover:scale-105 duration-500">
         <div class="flex items-center space-x-4">
@@ -131,7 +131,6 @@
       {% empty %}
       <div class="text-gray-600 text-sm p-2 rounded-xl text-center">No Transaction History to return yet.</div>
       {% endfor %}
-      <div class="absolute w-full bg-white/10 backdrop-blur-sm h-1/4 rounded-b-xl bottom-0 left-0"></div>
     </div>
 
   </div>

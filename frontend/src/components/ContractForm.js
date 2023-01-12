@@ -163,36 +163,44 @@ export default function ContractForm() {
       },
       {
         headers: {
-          'Authorization': `Bearer ${PAYSTACK_TEST_SK}`,
+          Authorization: `Bearer ${PAYSTACK_TEST_SK}`,
           'Content-Type': "application/json"
         }
       }).then(async (response) => {
-
         // initiate transfer to vendor
         await axios.post("https://api.paystack.co/transfer",
           {
             "source": "balance",
-            "amount": `${amount}`,
+            "amount": parseInt(amount),
             "reference": `${ref}`,
-            "recipient": `${response.data.recipient_code}`,
+            "recipient": `${response.data.data.recipient_code}`,
             "reason":  `Trustscrow Payout for Contract ID: ${id}`
           },
           {
             headers: {
-              'Authorization': `Bearer ${PAYSTACK_TEST_SK}`,
+              Authorization: `Bearer ${PAYSTACK_TEST_SK}`,
               'Content-Type': "application/json"
             }
           }
         // eslint-disable-next-line no-unused-vars
         ).then(async (response) => {
-          await axios.get(`/escrow/detail/${id}/${username}/payment_sent/`).then(async (res) => {
-            await iziToast.info({
-              title: "[PAYOUT SUCCESSFUL]",
-              message: res.message
-            });
-            await sleep(5000);
-            return window.location.replace(`${window.location.origin}/users/${username}/`);
-          });
+              console.log(response);
+              if(response.data.status !== "success") {
+                await iziToast.error({
+                  title: "[PAYOUT UNSUCCESSFUL]",
+                  message: response.data.data.status
+                });
+                await sleep(5000);
+                return window.location.reload();
+              }
+              await axios.get(`/escrow/contract/detail/${id}/${username}/payment_sent/${response.data.data.transfer_code}/`).then(async (res) => {
+                await iziToast.info({
+                  title: "[PAYOUT SUCCESSFUL]",
+                  message: res.data.message
+                });
+                await sleep(5000);
+                return window.location.replace(`${window.location.origin}/users/${username}/`);
+              });
         }).catch(async (error) => {
           await iziToast.error({
             title: "[PAYOUT UNSUCCESSFUL]",
@@ -208,6 +216,33 @@ export default function ContractForm() {
         console.log(error);
       });
     },
+
+    // async approve_transfer(slug, username, transfer_code) {
+    //   await axios.post("https://api.paystack.co/transfer/finalize_transfer/",
+    //   {
+    //     // "reference": `${ref}`,
+    //     "otp": "",
+    //     "transfer_code": `${transfer_code}`,
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${PAYSTACK_TEST_SK}`,
+    //       'Content-Type': "application/json"
+    //     }
+    //   }
+    // // eslint-disable-next-line no-unused-vars
+    // ).then(async (response) => {
+    //   console.log(response);
+    //   await axios.get(`/escrow/contract/detail/${slug}/${username}/payment_sent/${response.data.data.transfer_code}/completed/`).then(async (res) => {
+    //     await iziToast.info({
+    //       title: "[PAYOUT SUCCESSFUL]",
+    //       message: res.data.message
+    //     });
+    //     await sleep(5000);
+    //     return window.location.replace(`${window.location.origin}/escrow/contract/list/`);
+    //   });
+    // });
+    // },
 
     async updateData() {
       this.loading = true;
@@ -427,7 +462,7 @@ export default function ContractForm() {
             onSuccess: async (res) => {
               console.dir(res);
 
-              await axios.get(```${window.location.origin}/escrow/transaction/verify/${res.reference}/${res.status}/```)
+              await axios.get(`${window.location.origin}/escrow/transaction/verify/${res.reference}/${res.status}/`)
               .then(async (response) => {
                 await iziToast.info({
                   title: response.data.title,

@@ -532,7 +532,7 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["wamount"] = self.get_object().withdraw_amount
+        context["vendor"] = User.objects.get(email=self.get_object().vendor_email)
         return context
 
 
@@ -551,12 +551,59 @@ def contract_detail2(request, *args, **kwargs):
 
 
 def payment_sent(request, *args, **kwargs):
-    Contract.objects.filter(slug=kwargs['slug']).update(payment_withdrawn=True)
+    Contract.objects.filter(slug=kwargs['slug']).update(payment_withdrawn=True, payment_sent=True)
+    contract = Contract.objects.get(slug=kwargs["slug"])
     username = kwargs['username']
+    tf_code = kwargs['tf_code']
+    contract.contract_transaction.tf_code = tf_code
+    contract.contract_transaction.save()
     user = User.objects.get(username=username)
-    return JsonResponse(status=200, data={"message":f"{user.name.title()}, we have approved your payment for this job. Please kindly wait for confirmation"})
+    # msg = f"""
+    # Greetings Webmaster
+    # <br>
+    # <br>
+    # A new request has been made to approve the transfer of: N{contract.contract_amount} to {user.name} for a completed job.
+    # <br>
+    # <br>
+    # Please treat this as urgent to prevent your client from complaining of a delayed payment.
+    # <br><br>
+    # <a href="https://trustscrow.com/escrow/contract/detail/{contract.slug}/{user.username}/">Contract Link</a>
+    # """
+    # send_html_mail(subject=f"[REQUEST] APPROVE PAYOUT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[user.email])
+    msg = f"""
+    Greetings {user.name.title()}
+    <br>
+    <br>
+    We have confirmed your request to be paid the sum of: N{contract.contract_amount}
+    <br>
+    <br>
+    As stated in our terms and condition, we have deducted our 2.5% from the deposited amount, thus what you shall receive is {contract.withdraw_amount}.
+    <br><br>
+    <a href="https://trustscrow.com/escrow/contract/detail/{contract.slug}/{user.username}/">Contract Link</a>
+    """
+    send_html_mail(subject=f"APPROVED PAYOUT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[user.email])
+    return JsonResponse(status=200, data={"message":f"{user.name.title()}, we have receieved your payout request for this job. Please kindly wait for confirmation"})
 
 
+# def complete_payment(request, *args, **kwargs):
+#     Contract.objects.filter(slug=kwargs['slug']).update(payment_withdrawn=True)
+#     contract = Contract.objects.get(slug=kwargs['slug'])
+#     username = kwargs['username']
+#     user = User.objects.get(username=username)
+#     msg = f"""
+#     Greetings {user.name.title()}
+#     <br>
+#     <br>
+#     We have confirmed your request to be paid the sum of: N{contract.contract_amount}
+#     <br>
+#     <br>
+#     As stated in our terms and condition, we have deducted our 2.5% from the deposited amount, thus what you shall receive is {round(contract.withdraw_amount, 2) / 100}.
+#     <br><br>
+#     <a href="https://trustscrow.com/escrow/contract/detail/{contract.slug}/{user.username}/">Contract Link</a>
+#     """
+#     send_html_mail(subject=f"APPROVED PAYOUT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[user.email])
+
+#     return JsonResponse(status=200, data={"tf_code":kwargs['tf_code'], "redirect":reverse("escrow:list_contracts")})
 
 
 

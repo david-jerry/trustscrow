@@ -88,6 +88,7 @@ class Contract(TimeStampedModel):
     contract_amount = DecimalField(_("Contract Price"), max_digits=20, decimal_places=2, default=0.00)
     contract_paid = BooleanField(default=False)
     payment_withdrawn = BooleanField(default=False)
+    payment_sent = BooleanField(default=False)
     # contract_completed = BooleanField(default=False)
 
     # once the milestones and payment has been made the next step involves
@@ -100,11 +101,15 @@ class Contract(TimeStampedModel):
 
     @property
     def withdraw_amount(self):
-        return self.contract_amount - (self.contract_amount * Decimal(0.025))
+        amount = self.contract_amount - (self.contract_amount * Decimal(0.025))
+        amount = round(amount, 2) * 1
+        return str(int(amount)).replace(",", "")
 
     @property
     def deposit_amount(self):
-        return self.contract_amount + (self.contract_amount * Decimal(0.025))
+        amount = self.contract_amount + (self.contract_amount * Decimal(0.025))
+        amount = round(amount, 2) * 1
+        return str(int(amount)).replace(",", "")
 
     @property
     def title(self):
@@ -241,6 +246,7 @@ class Transactions(TimeStampedModel):
     vendor = ForeignKey(User, on_delete=CASCADE, related_name="vendor_transaction")
 
     ref_link = CharField(_("Transaction Ref"), max_length=500, blank=True)
+    tf_code = CharField(_("Transfer Code"), max_length=500, blank=True)
 
 
     def __str__(self):
