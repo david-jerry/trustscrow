@@ -1,6 +1,7 @@
 import axios from "./axiosFactory";
 import iziToast from "izitoast/dist/js/iziToast.min.js"; // you have access to iziToast now
 import PaystackPop from "@paystack/inline-js";
+import {PAYSTACK_TEST_SK} from "../../enviroments.js";
 
 function sleep(ms) {
   return new window.Promise((resolve) => setTimeout(resolve, ms));
@@ -149,6 +150,112 @@ export default function ContractForm() {
       console.log(el);
     },
 
+    // eslint-disable-next-line no-unused-vars
+    async vendor_payout(username, amount, id, bank_account, bank_code, name, ref) {
+      // get vendor account details to trasnfer to
+      await axios.post(`https://api.paystack.co/transferrecipient/`,
+      {
+        "type": "nuban",
+        "name": name,
+        "account_number": bank_account,
+        "bank_code": bank_code,
+        "currency": "NGN"
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${PAYSTACK_TEST_SK}`,
+          'Content-Type': "application/json"
+        }
+      }).then(async (response) => {
+
+        // initiate transfer to vendor
+        await axios.post("https://api.paystack.co/transfer",
+          {
+            "source": "balance",
+            "amount": `${amount}`,
+            "reference": `${ref}`,
+            "recipient": `${response.data.recipient_code}`,
+            "reason":  `Trustscrow Payout for Contract ID: ${id}`
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${PAYSTACK_TEST_SK}`,
+              'Content-Type': "application/json"
+            }
+          }
+        // eslint-disable-next-line no-unused-vars
+        ).then(async (response) => {
+          await axios.get(`/escrow/detail/${id}/${username}/payment_sent/`).then(async (res) => {
+            await iziToast.info({
+              title: "[PAYOUT SUCCESSFUL]",
+              message: res.message
+            });
+            await sleep(5000);
+            return window.location.replace(`${window.location.origin}/users/${username}/`);
+          });
+        }).catch(async (error) => {
+          await iziToast.error({
+            title: "[PAYOUT UNSUCCESSFUL]",
+            message: error.message
+          });
+          console.log(error);
+        });
+      }).catch(async (error) => {
+        await iziToast.error({
+          title: "[PAYOUT UNSUCCESSFUL]",
+          message: error.message
+        });
+        console.log(error);
+      });
+    },
+
+    async updateData() {
+      this.loading = true;
+
+      const formElement = this.$refs.form;
+      const action = formElement.action;
+      const csrf = formElement.dataset.csrf;
+      let data = new FormData(formElement);
+
+
+      formElement.querySelectorAll("[name]").forEach((fieldElement) => {
+        if (fieldElement.type !== "textarea" && fieldElement.type !== 'checkbox') {
+            data.append(fieldElement.name, fieldElement.value);
+        }
+
+        if (fieldElement.type === 'checkbox') {
+          if(fieldElement.name === 'active'){
+            data.append('active', true);
+          }
+        }
+      });
+
+      await axios
+        .post(action, data, {
+          headers: {
+            "X-CSRFToken": csrf,
+          },
+        })
+        .then(async function (response) {
+          console.log(response);
+          if (response.status === 200 || response.status === 201) {
+            iziToast.success({
+              title: "[ACCOUNT DETAILS UPDATED]",
+              balloon: true,
+              position: "topRight",
+              animateInside: true,
+              message: response.data.message,
+            });
+            await sleep(5000);
+            return window.location.replace(response.data.redirect);
+          }
+          return;
+        }).catch((error) => {
+          console.log(error);
+        });
+    },
+
+
     async submitContract() {
       let agreement = true;
       // let agreement = window.parent.tinymce.get("id_terms_for_termination").getContent();
@@ -200,7 +307,7 @@ export default function ContractForm() {
         })
         .then(async function (response) {
           if (response.status === 200 || response.status === 201) {
-            await iziToast.success({
+            iziToast.success({
               title: response.data.title,
               balloon: true,
               position: "topRight",
@@ -209,12 +316,13 @@ export default function ContractForm() {
             });
           }
           if (response.data.amount && response.data.pk && response.data.email && response.data.ref) {
+            let amount = response.data.amount * 100;
             const handler = new PaystackPop();
             await handler.newTransaction({
               key: response.data.pk,
               // key: "pk_test_e3d5e0bcf09cb129ba34480db85b925826242eb8",
               email: response.data.email,
-              amount: response.data.amount * 100,
+              amount: amount,
               currency: "NGN",
               ref: response.data.ref,
               onSuccess: async (res) => {
@@ -286,17 +394,34 @@ export default function ContractForm() {
 
     },
 
+    async vendor_approve(link) {
+      await axios.get(link).then(async (response) => {
+        iziToast.info({
+          title: "[CONTRACT APPROVED]",
+          message: response.data.message
+        });
+        await sleep(5000);
+        return window.location.reload();
+      }).catch(async (error) => {
+        iziToast.error({
+          title: "[CONTRACT APPROVED FAILED]",
+          message: error.data.message
+        });
+      });
+    },
+
     async retryPayment(ref) {
       this.loading = true;
       await axios.get(`${window.location.origin}/escrow/transaction/retry/${ref}/`).then(async (response) => {
         await sleep(2500); //wait 1 sec and then htmx redirect get
         if (response.data.amount && response.data.pk && response.data.email && response.data.ref) {
+          let amount = response.data.amount * 100;
           const handler = new PaystackPop();
           await handler.newTransaction({
             key: response.data.pk,
             // key: "pk_test_e3d5e0bcf09cb129ba34480db85b925826242eb8",
             email: response.data.email,
-            amount: response.data.amount * 100,
+            amount: amount,
             currency: "NGN",
             ref: response.data.ref,
             onSuccess: async (res) => {

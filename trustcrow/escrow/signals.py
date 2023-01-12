@@ -20,11 +20,14 @@ def contract_post_save(sender, instance, created, **kwargs):
     bpassword = User.objects.make_random_password(length=14)
     vpassword = User.objects.make_random_password(length=14)
 
+    buyer = User.objects.get(email=instance.buyer_email) if User.objects.filter(email=instance.buyer_email).exists() else None
+    vendor = User.objects.get(email=instance.vendor_email) if User.objects.filter(email=instance.vendor_email).exists() else None
 
 
     if created:
         buyer = User.objects.create_user(name=instance.buyer, email=instance.buyer_email, username=instance.buyer_email.split('@', 1)[0], password=bpassword) if not User.objects.filter(email=instance.buyer_email).exists() else User.objects.get(email=instance.buyer_email)
         vendor = User.objects.create_user(name=instance.vendor, email=instance.vendor_email, username=instance.vendor_email.split('@', 1)[0], password=vpassword) if not User.objects.filter(email=instance.vendor_email).exists() else User.objects.get(email=instance.vendor_email)
+        Transactions.objects.create(contract=instance, transaction_type=instance.contract_type, total_cost=instance.contract_amount, buyer=buyer, vendor=vendor)
         Profile.objects.filter(user=vendor).update(phone=instance.vendor_phone, address=instance.vendor_address, company_name=instance.vendor, company_phone_I=instance.vendor_phone, company_phone_II=instance.vendor_phone, company_address=instance.vendor_address) if Profile.objects.filter(user=vendor).exists() else Profile.objects.create(user=vendor, phone=instance.vendor_phone, address=instance.vendor_address, company_name=instance.vendor, company_phone_I=instance.vendor_phone, company_phone_II=instance.vendor_phone, company_address=instance.vendor_address)
         Profile.objects.filter(user=buyer).update(phone=instance.buyer_phone, address=instance.buyer_address) if Profile.objects.filter(user=buyer).exists() else Profile.objects.create(user=buyer, phone=instance.buyer_phone, address=instance.buyer_address)
         Order.objects.create(contract=instance, buyer=buyer, vendor=vendor)
@@ -43,7 +46,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         <br>
         <br>
         Here is the credentials to login in with:
@@ -63,7 +66,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         <br>
         <br>
         Here is the credentials to login in with:
@@ -74,15 +77,14 @@ def contract_post_save(sender, instance, created, **kwargs):
         """
         send_html_mail(subject=f"NEW ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 
-        Transactions.objects.create(contract=instance, transaction_type=instance.contract_type, total_cost=instance.contract_amount, buyer=buyer, vendor=vendor)
 
     if not instance.buyer_approve and instance.contract_paid:
         instance.buyer_approve = True
-        instance.save()
+        Contract.objects.filter(slug=instance.slug).update(buyer_approve=instance.buyer_approve)
 
     if instance.buyer_approve and instance.vendor_approve:
-        instance.contract_started = datetime.datetime.today()
-        instance.save()
+        instance.contract_started = datetime.date.today()
+        Contract.objects.filter(slug=instance.slug).update(contract_started=instance.contract_started)
         msg = f"""
         Greetings {buyer.name.title()}
         <br>
@@ -92,7 +94,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -105,13 +107,13 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 
-    if instance.completed and not instance.contract_ended:
-        instance.contract_ended = datetime.datetime.today()
-        instance.save()
+    if instance.completed and not instance.contract_ended and instance.contract_started:
+        instance.contract_ended = datetime.date.today()
+        Contract.objects.filter(slug=instance.slug).update(contract_ended=instance.contract_ended)
         msg = f"""
         Greetings {buyer.name.title()}
         <br>
@@ -121,7 +123,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -134,9 +136,12 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
+    elif instance.completed and instance.contract_ended and not instance.contract_started:
+        instance.contract_ended = ""
+        Contract.objects.filter(slug=instance.slug).update(contract_ended=instance.contract_ended)
 
 
 
@@ -152,7 +157,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -165,7 +170,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com{instance.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 

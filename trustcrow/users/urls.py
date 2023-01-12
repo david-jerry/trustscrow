@@ -9,7 +9,9 @@ from trustcrow.users.views import (
     list_products,
     product_detail_view,
     search_products,
-    create_product
+    create_product,
+    
+    add_bank
 )
 
 app_name = "users"
@@ -17,6 +19,8 @@ urlpatterns = [
     path("", view=all_users, name="all"),
     path("~redirect/", view=user_redirect_view, name="redirect"),
     path("~update/", view=user_update_view, name="update"),
+
+    path("banks/add/", view=add_bank, name="add_bank"),
 
     path("workshop/products/search/", view=search_products, name="search_products"),
     path("workshop/products/", view=list_products, name="list_products"),

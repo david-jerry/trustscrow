@@ -53,8 +53,10 @@ def retry_payment(request, ref_link):
         contract.save()
         ref = ref_link
         pk = settings.PAYSTACK_PUBLIC_KEY
-        amount = transaction.total_cost
+        amount = contract.deposit_amount
         email = transaction.contract.buyer_email
+        vuser = User.objects.get(email=contract.vendor_email)
+        buser = User.objects.get(email=email)
         LOGGER.info("Vendor and Buyer already exists")
         msg = f"""
         Greetings {transaction.contract.vendor.title()}
@@ -65,7 +67,7 @@ def retry_payment(request, ref_link):
         <br>
         Please proceed in delivering as agreed between you too.
         <br><br>
-        <a href="https://trustscrow.com{transaction.contract.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{transaction.contract.slug}/{vuser.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"PAID ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
 
@@ -78,7 +80,7 @@ def retry_payment(request, ref_link):
         <br>
         Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
         <br><br>
-        <a href="https://trustscrow.com{transaction.contract.get_email_url()}">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{transaction.contract.slug}/{buser.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
         return JsonResponse(
@@ -106,9 +108,11 @@ def retry_payment(request, ref_link):
 # Create your views here.
 
 def vendor_approve(request, slug):
-    Contract.objects.filter(slug=slug).update(vendor_approve=True)
+    if not Contract.objects.filter(slug=slug, vendor_approve=True).exists():
+        Contract.objects.filter(slug=slug).update(vendor_approve=True)
+        return JsonResponse(status=200, data={"message":"You have successfully approved the contract"})
     # milestone = get_object_or_404(Milestones, id=pk)
-    return redirect("escrow:contract_detail", slug=slug)
+    return JsonResponse(status=500, data={"message":"This contract has already been approved"})
 
 
 
@@ -117,13 +121,18 @@ def milestone_approve(request, pk):
     milestone = get_object_or_404(Milestones, id=pk)
     milestone.accepted = True
     milestone.save()
+    if milestone.completed:
+        milestone.contract.contract_ended = datetime.date.today()
+        milestone.contract.save()
+        return redirect("escrow:detail_milestone", pk=milestone.id)
     return redirect("escrow:detail_milestone", pk=milestone.id)
 
 
 def detail_milestone(request, pk):
     milestone = get_object_or_404(Milestones, id=pk)
     context = {
-        'obj':milestone
+        'obj':milestone,
+        'object': milestone.contract
     }
     return render(request, 'snippets/htmx/milestone_detail.html', context)
 
@@ -175,13 +184,19 @@ def approve_product(request, pk):
     product = get_object_or_404(OrderItems, id=pk)
     product.accepted = True
     product.save()
+    order = product.order
+    if order.accepted:
+        order.contract.contract_ended = datetime.date.today()
+        order.contract.save()
+        return redirect("escrow:detail_product", pk=product.id)
     return redirect("escrow:detail_product", pk=product.id)
 
 
 def detail_product(request, pk):
     product = get_object_or_404(OrderItems, id=pk)
     context = {
-        'obj':product
+        'obj':product,
+        'object':product.order.contract
     }
     return render(request, 'snippets/htmx/product_detail.html', context)
 
@@ -296,7 +311,7 @@ class ContractCreateView(FormView):
             slug = contract.slug
             ref = contract.contract_transaction.ref_link
             pk = settings.PAYSTACK_PUBLIC_KEY
-            amount = request.POST.get('amount')
+            amount = contract.deposit_amount
             email = request.POST.get('buyer_email')
             username = User.objects.get(email=request.POST.get('vendor_email')).username
 
@@ -365,6 +380,8 @@ def verify_transaction(request, ref, status):
     Transactions.objects.filter(contract=contract, ref_link=ref).update(
         transaction_status=status.upper()
     )
+    vuser = User.objects.get(email=contract.vendor_email)
+    buser = User.objects.get(email=contract.buyer_email)
     msg = f"""
     Greetings {contract.vendor.title()}
     <br>
@@ -374,7 +391,7 @@ def verify_transaction(request, ref, status):
     <br>
     Please proceed in delivering as agreed between you too.
     <br><br>
-    <a href="https://trustscrow.com{contract.get_email_url()}">Contract Link</a>
+    <a href="https://trustscrow.com/escrow/contract/detail/{contract.slug}/{vuser.username}/">Contract Link</a>
     """
     send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.vendor_email])
 
@@ -387,7 +404,7 @@ def verify_transaction(request, ref, status):
     <br>
     Please be assured, should they fail to meet up with the commitment, Your deposit shall be refunded and the contract termed Null and Void.
     <br><br>
-    <a href="https://trustscrow.com{contract.get_email_url()}">Contract Link</a>
+    <a href="https://trustscrow.com/escrow/contract/detail/{contract.slug}/{buser.username}/">Contract Link</a>
     """
     send_html_mail(subject=f"APPROVED ESCROW CONTRACT", html_content=msg2, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[contract.buyer_email])
 
@@ -513,6 +530,12 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
         else:
             raise PermissionDenied()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["wamount"] = self.get_object().withdraw_amount
+        return context
+
+
 contract_detail = ContractDetailView.as_view()
 
 
@@ -523,10 +546,15 @@ def contract_detail2(request, *args, **kwargs):
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     login(request, user)
     contract = Contract.objects.get(slug=slug)
-    return render(request, 'escrow/detail.html', context={"object":contract})
+    return redirect(reverse("escrow:contract_detail", kwargs={"slug":slug}))
+    # return render(request, 'escrow/detail.html', context={"object":contract})
 
 
-
+def payment_sent(request, *args, **kwargs):
+    Contract.objects.filter(slug=kwargs['slug']).update(payment_withdrawn=True)
+    username = kwargs['username']
+    user = User.objects.get(username=username)
+    return JsonResponse(status=200, data={"message":f"{user.name.title()}, we have approved your payment for this job. Please kindly wait for confirmation"})
 
 
 

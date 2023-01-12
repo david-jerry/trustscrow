@@ -21,6 +21,7 @@ from trustcrow.escrow.views import (
     verify_transaction,
     transaction_data,
     retry_payment,
+    payment_sent,
 
 
     # create_contract_service,
@@ -47,6 +48,7 @@ urlpatterns = [
     path("contract/list/search/", view=search_contracts, name="search_contracts"),
     path("contract/detail/<slug>/", view=contract_detail, name="contract_detail"),
     path("contract/detail/<slug>/<username>/", view=contract_detail2, name="contract_detail2"),
+    path("contract/detail/<slug>/<username>/payment_sent/", view=payment_sent, name="payment_sent"),
 
     # customers
     path("customers/list/", view=list_customers, name="list_customers"),

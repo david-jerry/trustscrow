@@ -52,14 +52,14 @@
                     <span class="block text-s md:text-sm text-gray-400 lowecase font-normal">{{object.vendor_email}}</span>
                 </h2>
             </div>
-            <div class="flex-none text-left md:text-right w-2/4 md:w-1/5">
+            <!-- <div class="flex-none text-left md:text-right w-2/4 md:w-1/5">
                 <span class="text-gray-400 text-sm md:text-base flex items-start space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 md:hidden">
                         <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
                     </svg>
                     <span class="block">{{object.vendor_address}}</span>
                 </span>
-            </div>
+            </div> -->
         </div>
 
         <div class="relative overflow-hidden w-full p-4 rounded-xl bg-warning text-gray-700">
@@ -114,7 +114,7 @@
                 <p class="text-gray-800 uppercase tracking-wide text-sm font-bold flex items-center justify-between">
                     <span class="block">Service Milestones</span>
 
-                    {% if object.creator == "Contractor" and object.buyer_email == request.user.email or object.creator == "Vendor" and object.vendor_email == request.user.email %}
+                    {% if object.vendor_email == request.user.email %}
                     <span hx-get="{% url 'escrow:add_milestones_form' object.slug %}" hx-swap="afterbegin" hx-target="#mform" class="flex group items-center space-x-2 cursor-pointer ">
                         <strong class="block text-sm">New</strong>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 group-hover:h-8 group-hover:w-8 duration-300">
@@ -173,33 +173,8 @@
                         </svg>
                         <span class="block">Mark</span>
                     </button>
-                    {% elif obj.accepted %}
-                    <button class="text-s uppercase bg-success text-white flex items-center space-x-2 absolute right-4 top-0 px-4 py-2 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                        <span class="block">Done</span>
-                    </button>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% else %}
-        <div class="px-4">
-            <div class="flex-1 px-1 py-2 mb-8">
-                <p class="text-gray-800 uppercase tracking-wide text-sm font-bold flex items-center justify-between">
-                    <span class="block">Product Orders</span>
-
-                    {% if object.creator == "Contractor" and object.buyer_email == request.user.email or object.creator == "Vendor" and object.vendor_email == request.user.email %}
-                    <button hx-get="{% url 'escrow:add_product_form' object.slug %}" hx-swap="afterbegin" hx-target="#mform" class="flex group items-center space-x-2 cursor-pointer ">
-                        <strong class="block text-sm">New</strong>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 group-hover:h-8 group-hover:w-8 duration-300">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
                     {% elif not obj.accepted and object.vendor_email == request.user.email %}
-                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
+                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-warning text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
                         <span class="block">Waiting</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                           <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
@@ -210,6 +185,24 @@
                         <span class="block">Done</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="px-4">
+            <div class="flex-1 px-1 py-2 mb-8">
+                <p class="relative overflow-hidden text-gray-800 uppercase tracking-wide text-sm font-bold flex items-center justify-between">
+                    <span class="block">Product Orders</span>
+
+                    {% if object.vendor_email == request.user.email %}
+                    <button hx-get="{% url 'escrow:add_product_form' object.slug %}" hx-swap="afterbegin" hx-target="#mform" class="flex group items-center space-x-2 cursor-pointer ">
+                        <strong class="block text-sm">New</strong>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 group-hover:h-8 group-hover:w-8 duration-300">
+                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clip-rule="evenodd" />
                         </svg>
                     </button>
                     {% endif %}
@@ -226,7 +219,7 @@
 
             <div id="mform" class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
                 {% for obj in object.get_products %}
-                <div hx-target="this" hx-swap="outerHTML" class="bg-gray-100 relative space-y-4 hover:shadow-xl py-4 duration-500 bg-white rounded-xl">
+                <div hx-target="this" hx-swap="outerHTML" class="bg-gray-100 relative space-y-4 hover:shadow-xl py-4 duration-500 bg-white rounded-xl overflow-hidden">
                     <div class="flex space-x-4 items-start">
                         <div class="ml-4 mt-4 md:w-14 w-6 md:h-14 h-6 rounded-xl border overflow-hidden bg-gray-100 flex-none">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="md:w-14 w-6 md:h-14 h-6 flex-none text-primary">
@@ -281,13 +274,13 @@
                         </svg>
                     </button>
                     {% elif not obj.accepted and object.vendor_email == request.user.email %}
-                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
+                    <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-warning text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
                         <span class="block">Waiting</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                           <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    {% elif obj.accepted and object.vendor_email == request.user.email or obj.accepted and object.buyer_email == request.user.email %}
+                    {% else %}
                     <button class="uppercase flex items-center space-x-2 px-3 py-2 bg-success text-white btn-rounded text-s absolute hover:shadow-md duration-300 -top-2 right-2">
                         <span class="block">Done</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -310,14 +303,24 @@
         </div>
 
         {% if not object.vendor_approve and object.vendor_email == request.user.email %}
-        <button hx-get="{% url 'escrow:vendor_approve' object.slug object.id %}" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve Contract</button>
+        <button @click="vendor_approve('/escrow/contract/vendor/approve/{{object.slug}}/')" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve Contract</button>
         {% endif %}
 
         {% if not object.buyer_approve and object.buyer_email == request.user.email %}
         <button @click="retryPayment('{{object.contract_transaction.ref_link}}')" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve & Pay for Contract</button>
         {% endif %}
 
-        {% if object.vendor_approve and object.buyer_approve %}
+        {% if object.contract_ended and object.contract_started and object.buyer_email == request.user.email %}
+        <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">COMPLETED</button>
+        {% elif object.contract_ended and object.contract_started and object.vendor_email == request.user.email and not object.payment_withdrawn %}
+          {% if not request.user.get_user_banks.active %}
+          <a href="{% url 'users:update' %}" class="text-center font-bold uppercase bg-warning text-gray-700 px-5 py-3 rounded-xl block">REQUEST PAYMENT</a>
+          {% else %}
+          <button @click="vendor_payout( '{{request.user.username}}', '{{wamount}}', '{{object.slug}}', '{{request.user.get_user_banks.acc_no}}', '{{request.user.get_user_banks.bank.code}}', '{{request.user.name}}', '{{object.contract_transaction.ref_link}}' )" class="text-center font-bold uppercase bg-warning text-gray-700 px-5 py-3 rounded-xl block">REQUEST PAYMENT</button>
+          {% endif %}
+        {% elif object.contract_ended and object.contract_started and object.vendor_email == request.user.email and object.payment_withdrawn %}
+        <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">COMPLETED</button>
+        {% elif object.vendor_approve and object.buyer_approve %}
         <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">APPROVED</button>
         {% else %}
         <button class="text-center text-white font-bold uppercase bg-danger px-5 py-3 rounded-xl block">UNAPPROVED</button>

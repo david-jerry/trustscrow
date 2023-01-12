@@ -7,8 +7,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, RedirectView, UpdateView, FormView, ListView
+from django.views.generic import DetailView, RedirectView, UpdateView, FormView, ListView, CreateView
+from trustcrow.currency.models import Banks
 from trustcrow.escrow.models import Contract
+from trustcrow.users.forms import UserSignupForm
+from trustcrow.users.models import BankAccount, Profile
 
 from trustcrow.utils.logger import LOGGER
 from trustcrow.workshop.forms import ProductForm
@@ -183,10 +186,79 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
 user_detail_view = UserDetailView.as_view()
 
-class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-
+class UserUpdateView(LoginRequiredMixin, FormView):
     model = User
-    fields = ["name"]
+    form_class = UserSignupForm
+    template_name = "users/user_form.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.request.user
+        return context
+
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST["name"]
+        phone = request.POST["phone"]
+        address = request.POST["address"]
+        request.user.name = name
+        request.user.save()
+
+
+        # company details
+        company_reg_no = request.POST["company_reg_no"]
+        company_rep = request.POST["company_rep"]
+        company_website = request.POST["company_website"]
+        company_phone_I = request.POST["company_phone_I"]
+        company_phone_II = request.POST["company_phone_II"]
+        company_address = request.POST["company_address"]
+        company_name = request.POST["company_name"]
+        company_tagline = request.POST["company_tagline"]
+        Profile.objects.filter(user=request.user).update(
+            phone = phone,
+            address = address,
+            company_name = company_name,
+            company_tagline = company_tagline,
+            company_reg_no = company_reg_no,
+            company_rep = company_rep,
+            company_website = company_website,
+            company_phone_I = company_phone_I,
+            company_phone_II = company_phone_II,
+            company_address = company_address,
+        )
+
+        # bank details
+        bank = Banks.objects.get(name__iexact=request.POST["bank"])
+        acc_no = request.POST["acc_no"]
+        acc_name = request.POST["acc_name"]
+        bvn = request.POST["bvn"]
+        active = True
+
+        BankAccount.objects.create(
+            user=request.user,
+            bank=bank,
+            acc_no=acc_no,
+            acc_name=acc_name,
+            bvn=bvn,
+            active=active
+        )
+        return JsonResponse(status=200, data={"message":"You have updated your information successfully", "redirect":request.user.get_absolute_url()})
+
+
+user_update_view = UserUpdateView.as_view()
+
+class UserAddBank(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+
+    model = BankAccount
+    template_name = "users/add_bank.html"
+    fields = [
+        "bank",
+        "acc_no",
+        "acc_name",
+        "bvn",
+        "active",
+    ]
     success_message = _("Information successfully updated")
 
     def get_success_url(self):
@@ -195,11 +267,13 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         )  # for mypy to know that the user is authenticated
         return self.request.user.get_absolute_url()
 
-    def get_object(self):
-        return self.request.user
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["object"] = self.request.user
+        return context
 
 
-user_update_view = UserUpdateView.as_view()
+add_bank = UserAddBank.as_view()
 
 
 class UserRedirectView(LoginRequiredMixin, RedirectView):

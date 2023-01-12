@@ -65,8 +65,10 @@ class User(AbstractUser):
 
     @property
     def all_transactions(self):
-        if Transactions.objects.filter(Q(buyer__email=self.email), Q(vendor__email=self.email)).exists():
-            return Transactions.objects.filter(Q(buyer__email=self.email), Q(vendor__email=self.email))
+        if Transactions.objects.filter(contract__buyer_email__iexact=self.email).exists():
+            return Transactions.objects.filter(contract__buyer_email__iexact=self.email)
+        if Transactions.objects.filter(contract__vendor_email__iexact=self.email).exists():
+            return Transactions.objects.filter(contract__vendor_email__iexact=self.email)
         return None
 
     @property
@@ -178,13 +180,13 @@ class User(AbstractUser):
 
     @property
     def all_customers(self):
-        if self.vendor:
+        if Contract.objects.filter(vendor_email=self.email).exists():
             clients = Contract.objects.filter(vendor_email=self.email)
             users = []
             for user in clients:
-                u = User.objects.filter(email = user.buyer_email)
-                if u.exists() and not User.objects.get(email = user.buyer_email) in users:
-                    users.append(User.objects.get(email = user.buyer_email))
+                u = User.objects.get(email = user.buyer_email)
+                if u:# and not User.objects.get(email = user.buyer_email) in users:
+                    users.append(u)
             return users
         return None
 
@@ -195,7 +197,7 @@ class User(AbstractUser):
     @property
     def get_user_banks(self):
         if self.bank_account:
-            return self.bank_account.filter(verified=True)
+            return self.bank_account.filter(active=True).first()
         return None
 
     @property
@@ -346,6 +348,7 @@ class BankAccount(TimeStampedModel):
     bvn = CharField(max_length=11)
 
     verified = BooleanField(default=False)
+    active = BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username.upper()} Saved Bank Account: {self.acc_no}"

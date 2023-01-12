@@ -6,6 +6,7 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const { InjectManifest } = require('workbox-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const getEntryObject = () => {
   const entries = {};
@@ -31,6 +32,7 @@ module.exports = {
     runtimeChunk: "single",
   },
   plugins: [
+    new Dotenv(),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [

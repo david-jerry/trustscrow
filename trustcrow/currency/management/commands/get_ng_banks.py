@@ -27,14 +27,9 @@ class Command(BaseCommand):
             "country":"nigeria",
         }
 
-        if not settings.PRODUCTION:
-            headers = {
-                'Authorization': str(settings.PAYSTACK_TEST_SK),
-            }
-        else:
-            headers = {
-                'Authorization': str(settings.PAYSTACK_LIVE_SK),
-            }
+        headers = {
+            'Authorization': str(settings.PAYSTACK_SECRET_KEY),
+        }
 
         res = requests.request("GET", url, headers=headers, params=params)
         res = res.json()
@@ -46,7 +41,7 @@ class Command(BaseCommand):
                 try:
                     Banks.objects.create(
                         name=response['name'],
-                        slug=response['slug'],
+                        # slug=response['slug'],
                         lcode=response['longcode'],
                         code=response['code'],
                         country_iso=response['country']
@@ -70,7 +65,7 @@ class Command(BaseCommand):
                         try:
                             Banks.objects.create(
                                 name=response['name'],
-                                slug=response['slug'],
+                                # slug=response['slug'],
                                 lcode=response['longcode'],
                                 code=response['code'],
                                 country_iso=response['country']
@@ -94,7 +89,7 @@ class Command(BaseCommand):
                                     try:
                                         Banks.objects.create(
                                             name=response['name'],
-                                            slug=response['slug'],
+                                            # slug=response['slug'],
                                             lcode=response['longcode'],
                                             code=response['code'],
                                             country_iso=response['country']

@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.functional import SimpleLazyObject
 from django.urls import reverse
+from trustcrow.currency.models import Banks
 
 # from trustcrow.currency.models import Currency
 from trustcrow.utils.logger import LOGGER
@@ -42,6 +43,7 @@ def context_settings(request):
         'webpush': webpush,
         'APPLICATION_SERVER_KEY': vapid_key,
         'hour': int(hour),
+        "banks": Banks.objects.all(),
         # "currency": Currency.objects.all() if Currency.objects.all().exists() else None,
 
 

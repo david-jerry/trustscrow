@@ -87,6 +87,8 @@ class Contract(TimeStampedModel):
     # once contract has been paid for, then start the contract
     contract_amount = DecimalField(_("Contract Price"), max_digits=20, decimal_places=2, default=0.00)
     contract_paid = BooleanField(default=False)
+    payment_withdrawn = BooleanField(default=False)
+    # contract_completed = BooleanField(default=False)
 
     # once the milestones and payment has been made the next step involves
     # completing the milestone or product before a start date can be created
@@ -94,6 +96,15 @@ class Contract(TimeStampedModel):
     contract_started = DateField(_("Contract Start Date"), blank=True, null=True)
     contract_ended = DateField(_("Contract Start Date"), blank=True, null=True)
 
+
+
+    @property
+    def withdraw_amount(self):
+        return self.contract_amount - (self.contract_amount * Decimal(0.025))
+
+    @property
+    def deposit_amount(self):
+        return self.contract_amount + (self.contract_amount * Decimal(0.025))
 
     @property
     def title(self):
@@ -273,6 +284,14 @@ class Milestones(TimeStampedModel):
         if self.deadline < datetime.datetime.today():
             return True
         return False
+
+    @property
+    def completed(self):
+        if Milestones.objects.filter(contract=self.contract, accepted=True).exists():
+            qs = Milestones.objects.filter(contract=self.contract).count()
+            if Milestones.objects.filter(contract=self.contract, accepted=True).count() == qs and qs > 0:
+                return True
+            return False
 
     @property
     def overdue_days(self):
