@@ -47,13 +47,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
         <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
-        <br>
-        <br>
-        Here is the credentials to login in with:
-        <br>
-        <strong>Email: </strong> <span>{buyer.email}</span>
-        <br>
-        <strong>Temporary Password: </strong> <span>{bpassword}</span>
+        <br><br>
         """
         send_html_mail(subject=f"NEW ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -69,22 +63,15 @@ def contract_post_save(sender, instance, created, **kwargs):
         <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         <br>
         <br>
-        Here is the credentials to login in with:
-        <br>
-        <strong>Email: </strong> <span>{vendor.email}</span>
-        <br>
-        <strong>Temporary Password: </strong> <span>{vpassword}</span>
         """
         send_html_mail(subject=f"NEW ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 
 
     if not instance.buyer_approve and instance.contract_paid:
-        instance.buyer_approve = True
-        Contract.objects.filter(slug=instance.slug).update(buyer_approve=instance.buyer_approve)
+        Contract.objects.filter(slug=instance.slug).update(buyer_approve=True)
 
     if instance.buyer_approve and instance.vendor_approve:
-        instance.contract_started = datetime.date.today()
-        Contract.objects.filter(slug=instance.slug).update(contract_started=instance.contract_started)
+        Contract.objects.filter(slug=instance.slug).update(contract_started=datetime.date.today())
         msg = f"""
         Greetings {buyer.name.title()}
         <br>
@@ -186,7 +173,7 @@ def transaction_post_save(sender, instance, created, **kwargs):
         instance.ref_link = unique_ref_generator(instance).lower()
         instance.save()
 
-    if instance.transaction_status == instance.SUCCESS:
+    if instance.transaction_status == "SUCCESS":
         escrow_balance = instance.total_cost + instance.vendor.wallet.escrow_balance
         new_balance = instance.total_cost
         old_balance = instance.vendor.wallet.old_balance

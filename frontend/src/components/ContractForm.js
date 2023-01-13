@@ -186,10 +186,10 @@ export default function ContractForm() {
         // eslint-disable-next-line no-unused-vars
         ).then(async (response) => {
               console.log(response);
-              if(response.data.status !== "success") {
+              if(response.data.data.status !== "success") {
                 await iziToast.error({
                   title: "[PAYOUT UNSUCCESSFUL]",
-                  message: response.data.data.message
+                  message: response.data.message
                 });
                 await sleep(5000);
                 return window.location.reload();
@@ -197,8 +197,9 @@ export default function ContractForm() {
               await axios.get(`/escrow/contract/detail/${id}/${username}/payment_sent/${response.data.data.transfer_code}/`).then(async (res) => {
                 await iziToast.info({
                   title: "[PAYOUT SUCCESSFUL]",
-                  message: res.data.message
+                  message: response.data.message
                 });
+                console.info(res);
                 await sleep(5000);
                 return window.location.replace(`${window.location.origin}/users/${username}/`);
               });
@@ -379,15 +380,15 @@ export default function ContractForm() {
                   }
                 });
               },
-              onCancle: async function() {
-                await iziToast.info({
-                  title: "TRANSACTION FAILED",
+              onClose: () => {
+                iziToast.info({
+                  title: "TRANSACTION TERMINATED",
                   balloon: true,
                   position: "topRight",
                   animateInside: true,
-                  message: "This transaction could not be completed at the moment. Please try again!",
+                  message: "This transaction could not be completed at the moment. Please try again after approving the contract!",
                 });
-                return window.location.reload();
+                return window.location.replace(`${window.location.origin}/escrow/contract/detail/${response.data.slug}/`);
               }
             });
           } else if (response.data.slug) {

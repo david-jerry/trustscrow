@@ -111,7 +111,7 @@
               {% endif %}
             </div>
             <div>
-              {% if tx.vendor %}
+              {% if tx.contract.vendor_email == request.user.email %}
               <strong class="text-base font-bold block">From {% if tx.buyer.name %}{{tx.buyer.name|title}}{% else %}{{tx.buyer.username|title}}{% endif %}</strong>
               {% else %}
               <strong class="text-base font-bold block">To {% if tx.vendor.name %}{{tx.vendor.name|title}}{% else %}{{tx.vendor.username|title}}{% endif %}</strong>
@@ -120,12 +120,12 @@
             </div>
           </div>
           <div class="text-right">
-            {% if tx.contract.payment_sent %}
+            {% if tx.contract.payment_sent and tx.contract.vendor_email == request.user.email %}
             <strong class="text-base font-bold block text-success">+ {{tx.total_cost}}</strong>
-            <p class="text-normal text-gray-300 text-s">Amount Recieved</p>
+            <p class="text-normal text-gray-400 text-s">Amount Recieved</p>
             {% else %}
             <strong class="text-base font-bold block text-danger">- {{tx.total_cost}}</strong>
-            <p class="text-normal text-gray-300 text-s">Amount Spent</p>
+            <p class="text-normal text-gray-400 text-s">Amount Spent</p>
             {% endif %}
           </div>
         </div>

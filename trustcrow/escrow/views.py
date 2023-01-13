@@ -47,6 +47,11 @@ User = get_user_model()
 def retry_payment(request, ref_link):
     if request.method == "GET":
         transaction = Transactions.objects.get(ref_link=ref_link)
+        if transaction.transaction_status.upper() == "SUCCESS":
+            contract.contract_paid = True
+            contract.buyer_approve = True
+            contract.save()
+
         slug = transaction.contract.slug
         contract = transaction.contract
         contract.buyer_approve = True
@@ -109,7 +114,10 @@ def retry_payment(request, ref_link):
 
 def vendor_approve(request, slug):
     if not Contract.objects.filter(slug=slug, vendor_approve=True).exists():
-        Contract.objects.filter(slug=slug).update(vendor_approve=True)
+        # Contract.objects.filter(slug=slug).update(vendor_approve=True)
+        contract = Contract.objects.get(slug=slug)
+        contract.vendor_approve=True
+        contract.save()
         return JsonResponse(status=200, data={"message":"You have successfully approved the contract"})
     # milestone = get_object_or_404(Milestones, id=pk)
     return JsonResponse(status=500, data={"message":"This contract has already been approved"})
@@ -202,7 +210,7 @@ def detail_product(request, pk):
 
 def create_product(request, slug):
     contract = Contract.objects.get(slug=slug)
-    user = User.objects.get(email=contract.vendor_email)
+    user = request.user
     order = Order.objects.get(contract=contract)
 
     if not Products.objects.filter(
@@ -380,6 +388,10 @@ def verify_transaction(request, ref, status):
     Transactions.objects.filter(contract=contract, ref_link=ref).update(
         transaction_status=status.upper()
     )
+    if status.upper() == "SUCCESS":
+        contract.contract_paid = True
+        contract.buyer_approve = True
+        contract.save()
     vuser = User.objects.get(email=contract.vendor_email)
     buser = User.objects.get(email=contract.buyer_email)
     msg = f"""

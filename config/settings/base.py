@@ -347,8 +347,8 @@ ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 600
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_MAX_EMAIL_ADDRESSES = 1
 ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_OLD_PASSWORD_FIELD_ENABLED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html

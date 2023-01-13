@@ -12,7 +12,7 @@ User = get_user_model()
 
 @receiver(post_save, sender=Products)
 def product_post_save(sender, instance, created, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-        Products.objects.filter(id=instance.id).update(slug=instance.slug)
+    if instance.created:
+        slug = unique_slug_generator(instance)
+        Products.objects.filter(id=instance.id).update(slug=slug)
 

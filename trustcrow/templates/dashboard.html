@@ -24,12 +24,16 @@
           <p class="block text-sm">Welcome Back 🤭 </p>
         </div>
 
+        <div class="space-y-1">
+          <a href="{% url 'account_change_password' %}" class="md:hidden block w-fit bg-primary text-white text-sm py-2 px-4 hover:shadow-md duration-300 rounded-xl">Change Password</a>
+          <a href="{% url 'users:update' %}" class="md:hidden block w-fit bg-primary text-white text-sm py-2 px-4 hover:shadow-md duration-300 rounded-xl">Update Account</a>
+        </div>
+
         <div class="p-2 rounded-xl bg-black text-white ml-auto">
           <span class="block text-s font-bold text-right">Earning</span>
           <strong class="block text-sm md:text-xl font-bold">₦ {{request.user.wallet_balance|floatformat:2}}</strong>
         </div>
       </section>
-
 
       {% block records %}
       {% if request.user.vendor %}

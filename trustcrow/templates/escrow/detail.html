@@ -306,22 +306,20 @@
         <button @click="vendor_approve('/escrow/contract/vendor/approve/{{object.slug}}/')" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve Contract</button>
         {% endif %}
 
-        {% if not object.buyer_approve and object.buyer_email == request.user.email %}
+        {% if not object.buyer_approve and object.buyer_email == request.user.email and not object.contract_paid %}
         <button @click="retryPayment('{{object.contract_transaction.ref_link}}')" class="font-bold text-white btn-success px-6 py-4 hover:scale-105 duration-500 btn-rounded text-sm block">Approve & Pay for Contract</button>
         {% endif %}
 
-        {% if not request.user.is_superuser and object.contract_ended and object.contract_started and object.buyer_email == request.user.email %}
+        {% if object.contract_ended and object.contract_started and object.buyer_email == request.user.email %}
         <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">COMPLETED</button>
-        {% elif not request.user.is_superuser and object.contract_ended and object.contract_started and object.vendor_email == request.user.email and not object.payment_withdrawn %}
+        {% elif object.contract_ended and object.contract_started and object.vendor_email == request.user.email and not object.payment_withdrawn %}
           {% if not request.user.get_user_banks.active %}
           <a href="{% url 'users:update' %}" class="text-center font-bold uppercase bg-warning text-gray-700 px-5 py-3 rounded-xl block">REQUEST PAYMENT</a>
           {% else %}
           <button @click="vendor_payout( '{{request.user.username}}', '{{object.withdraw_amount}}', '{{object.slug}}', '{{request.user.get_user_banks.acc_no}}', '{{request.user.get_user_banks.bank.code}}', '{{request.user.name}}', '{{object.contract_transaction.ref_link|lower}}' )" class="text-center font-bold uppercase bg-warning text-gray-700 px-5 py-3 rounded-xl block">REQUEST PAYMENT</button>
           {% endif %}
-        {% elif not request.user.is_superuser and object.contract_ended and object.contract_started and object.vendor_email == request.user.email and object.payment_withdrawn %}
+        {% elif object.contract_ended and object.contract_started and object.vendor_email == request.user.email and object.payment_withdrawn %}
         <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">COMPLETED</button>
-        {% elif request.user.is_superuser and object.contract_ended and object.contract_started and not object.payment_sent %}
-        <button @click="approve_transfer( '{{object.slug}}', '{{vendor.username}}', '{{object.contract_transaction.tf_code}}' )" class="text-center font-bold uppercase bg-primary px-5 py-3 rounded-xl block">APPROVE PAYOUT</button>
         {% elif object.vendor_approve and object.buyer_approve %}
         <button class="text-center font-bold uppercase bg-success px-5 py-3 rounded-xl block">APPROVED</button>
         {% else %}
