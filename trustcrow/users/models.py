@@ -84,7 +84,15 @@ class User(AbstractUser):
         return Decimal(0.00)
 
 
-
+    @property
+    def wallet_balance(self):
+        if Contract.objects.filter(vendor_email=self.email, payment_sent=False).exists():
+            contracts = Contract.objects.filter(vendor_email=self.email, payment_sent=False)
+            total = 0
+            for con in contracts:
+                total += int(con.withdraw_amount)
+            return total
+        return 0
 
 
     @property
