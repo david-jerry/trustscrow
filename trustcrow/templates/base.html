@@ -151,7 +151,7 @@
     {% endblock share %}
 
     <section  @click.outside="menu=false, popout=false" x-data="{menu: false, popout:false}" class="z-40 animate-bounde-slow hover:animate-none w-screen md:hidden flex-none flex flex-col items-center fixed bottom-0 left-0 right-0 p-4 space-y-2">
-      <div x-transition.duration.300ms  :class="{'max-h-80 min-h-max duration-300 pt-4 flex-none pl-4 pr-4 pb-8':menu, 'h-0 duration-300':!menu}" class="w-full h-0 overflow-hidden rounded-t-xl bg-white/50 text-black backdrop-blur-md">
+      <div x-transition.duration.300ms  :class="{'max-h-80 min-h-max duration-300 pt-4 flex-none pl-4 pr-4 pb-8':menu, 'h-0 duration-300':!menu}" class="w-full h-0 overflow-hidden rounded-t-xl bg-white/70 text-black backdrop-blur-xl">
         <div :class="{'h-52':popout}" class="w-full min-h-fit flex-wrap flex gap-4 flex-none relative">
           <a href="{% url 'home' %}" class="btn-black btn-rounded text-s flex-none">HOME</a>
           <a href="{% url 'home' %}#how" class="btn-black btn-rounded text-s flex-none">HOW IT WORKS</a>

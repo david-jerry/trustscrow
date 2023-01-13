@@ -129,11 +129,11 @@
             {% endif %}
           </div>
         </div>
-        {% if not request.user.get_user_banks and not tx.contract.payment_sent %}
+        {% if not request.user.get_user_banks and not tx.contract.payment_sent and request.user.email == tx.contract.vendor_email %}
         <a href="{% url 'users:update' %}" class="bg-warning btn-rounded hover:shadow-xl duration 300 w-full py-2 text-center text-gray-700 font-bold">
           <span class="block">REQUEST PAYMENT</span>
         </a>
-        {% elif not tx.contract.payment_sent %}
+        {% elif not tx.contract.payment_sent and request.user.email == tx.contract.vendor_email %}
         <button @click="vendor_payout( '{{request.user.username}}', '{{tx.contract.withdraw_amount}}', '{{tx.contract.slug}}', '{{request.user.get_user_banks.acc_no}}', '{{request.user.get_user_banks.bank.code}}', '{{request.user.name}}', '{{tx.ref_link}}' )" class="bg-warning btn-rounded hover:shadow-xl duration 300 w-full py-2 text-center text-gray-700 font-bold">
           <span class="block">REQUEST PAYMENT</span>
         </button>
