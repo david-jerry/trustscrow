@@ -167,14 +167,15 @@ export default function ContractForm() {
           'Content-Type': "application/json"
         }
       }).then(async (response) => {
+        console.log(response.data.data.recipient_code);
         // initiate transfer to vendor
         await axios.post("https://api.paystack.co/transfer",
           {
             "source": "balance",
-            "amount": parseInt(amount),
+            "amount": parseInt(amount) * 100,
             "reference": `${ref}`,
             "recipient": `${response.data.data.recipient_code}`,
-            "reason":  `Trustscrow Payout for Contract ID: ${id}`
+            "reason":  `Trustscrow Payout for Contract ID: <a href="https://trustscrow.com/escrow/contract/${id}/${username}/">${id}</a>`
           },
           {
             headers: {
@@ -188,7 +189,7 @@ export default function ContractForm() {
               if(response.data.status !== "success") {
                 await iziToast.error({
                   title: "[PAYOUT UNSUCCESSFUL]",
-                  message: response.data.data.status
+                  message: response.data.data.message
                 });
                 await sleep(5000);
                 return window.location.reload();
@@ -205,14 +206,13 @@ export default function ContractForm() {
           console.log(error);
           await iziToast.error({
             title: "[PAYOUT UNSUCCESSFUL]",
-            message: error.data.message
+            message: error.response.data.message
           });
-          console.log(error);
         });
       }).catch(async (error) => {
         await iziToast.error({
           title: "[PAYOUT UNSUCCESSFUL]",
-          message: error.message
+          message: error.response.data.message
         });
         console.log(error);
       });
