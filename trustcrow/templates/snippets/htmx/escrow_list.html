@@ -54,6 +54,6 @@
 {% empty %}
 <div class="col-span-4 rounded-xl shadow-xl bg-white text-gray-800 py-8 text-center space-y-3">
   <p class="text-base text-gray-400 block">No Contract Matching or Created Yet</p>
-  <a href="" class="btn-warning uppercase btn-rounded block w-fit mx-auto text-sm">Create Contract</a>
+  <a href="{% url 'new_contract' %}" class="btn-warning uppercase btn-rounded block w-fit mx-auto text-sm">Create Contract</a>
 </div>
 {% endfor %}

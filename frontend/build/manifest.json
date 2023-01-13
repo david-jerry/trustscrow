@@ -1,6 +1,6 @@
 {
-  "app.css": "/static/css/app.7a3d6e0d4b90a55a40c4.css",
-  "app.js": "/static/js/app.0396a77a.js",
+  "app.css": "/static/css/app.f924a66dc84a6b474342.css",
+  "app.js": "/static/js/app.5f3e4d1f.js",
   "app2.js": "/static/js/app2.33d3986e.js",
   "assets/android-chrome-144x144.png": "/static/assets/android-chrome-144x144.png",
   "assets/android-chrome-192x192.png": "/static/assets/android-chrome-192x192.png",
@@ -43,18 +43,18 @@
   "assets/yandex-browser-manifest.json": "/static/assets/yandex-browser-manifest.json",
   "css/13.1e3be9d05835c4664ad7.css": "/static/css/13.1e3be9d05835c4664ad7.css",
   "css/13.1e3be9d05835c4664ad7.css.map": "/static/css/13.1e3be9d05835c4664ad7.css.map",
-  "css/app.7a3d6e0d4b90a55a40c4.css.map": "/static/css/app.7a3d6e0d4b90a55a40c4.css.map",
+  "css/app.f924a66dc84a6b474342.css.map": "/static/css/app.f924a66dc84a6b474342.css.map",
   "entrypoints": {
     "app": {
       "assets": {
         "js": [
           "/static/js/runtime.8a8dc1e8.js",
           "/static/js/13.ec0fe475.js",
-          "/static/js/app.0396a77a.js"
+          "/static/js/app.5f3e4d1f.js"
         ],
         "css": [
           "/static/css/13.1e3be9d05835c4664ad7.css",
-          "/static/css/app.7a3d6e0d4b90a55a40c4.css"
+          "/static/css/app.f924a66dc84a6b474342.css"
         ]
       }
     },
@@ -71,7 +71,7 @@
   "js/13.ec0fe475.js": "/static/js/13.ec0fe475.js",
   "js/13.ec0fe475.js.LICENSE.txt": "/static/js/13.ec0fe475.js.LICENSE.txt",
   "js/13.ec0fe475.js.map": "/static/js/13.ec0fe475.js.map",
-  "js/app.0396a77a.js.map": "/static/js/app.0396a77a.js.map",
+  "js/app.5f3e4d1f.js.map": "/static/js/app.5f3e4d1f.js.map",
   "js/app2.33d3986e.js.map": "/static/js/app2.33d3986e.js.map",
   "js/runtime.8a8dc1e8.js.map": "/static/js/runtime.8a8dc1e8.js.map",
   "runtime.js": "/static/js/runtime.8a8dc1e8.js",

@@ -514,6 +514,35 @@ class CustomerList(LoginRequiredMixin, ListView):
 
 list_customers = CustomerList.as_view()
 
+class TransactionList(LoginRequiredMixin, ListView):
+    model = Contract
+    template_name = "escrow/transaction_list.html"
+    paginate_by = 10
+    allow_empty = True
+    context_object_name = "objects"
+    page_kwarg = 'page'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            return user.all_transactions
+        else:
+            return redirect(reverse("account_login"))
+
+    def get_template_names(self):
+        if not self.request.htmx:
+            LOGGER.info("serving from request without htmx")
+            return 'escrow/transaction_list.html'
+        elif self.request.htmx:
+            LOGGER.info("serving from request with htmx")
+            return 'snippets/htmx/escrow_transaction_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+list_transactions = TransactionList.as_view()
+
 
 class ContractDetailView(LoginRequiredMixin, DetailView):
 

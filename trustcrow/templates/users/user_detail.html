@@ -90,43 +90,58 @@
       {% endfor %}
     </div>
 
-    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Transaction History</span> </strong> <a href="{% url 'escrow:list_contracts' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Transaction History</span> </strong> <a href="{% url 'escrow:list_transactions' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
     <div class="w-full relative max-h-72 overflow-y-auto scrollbar-hidden scrollbar-hide btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden space-y-3">
       {% for tx in request.user.all_transactions|slice:":7" %}
-      <div class="flex items-center justify-between hover:shadow-md hover:scale-105 duration-500">
-        <div class="flex items-center space-x-4">
-          <div class="p-4 bg-gray-200 text-gray-700 rounded-full">
-            {% if tx.vendor == request.user %}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-success/50">
-              <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
-              <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
-              <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
-            </svg>
+      <div x-data="ContractDetailForm" class="hover:shadow-md bg-gray-100 p-3 rounded-xl duration-500 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="p-4 bg-gray-200 text-gray-700 rounded-full">
+              {% if tx.contract.vendor_email == request.user.email %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-success/50">
+                <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
+                <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clip-rule="evenodd" />
+                <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
+              </svg>
+              {% else %}
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-danger/50">
+                <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
+                <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" clip-rule="evenodd" />
+              </svg>
+              {% endif %}
+            </div>
+            <div>
+              {% if tx.vendor %}
+              <strong class="text-base font-bold block">From {% if tx.buyer.name %}{{tx.buyer.name|title}}{% else %}{{tx.buyer.username|title}}{% endif %}</strong>
+              {% else %}
+              <strong class="text-base font-bold block">To {% if tx.vendor.name %}{{tx.vendor.name|title}}{% else %}{{tx.vendor.username|title}}{% endif %}</strong>
+              {% endif %}
+              <p class="text-normal text-gray-300 text-s">{{tx.modified|date:"M d, Y"}}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            {% if tx.contract.payment_sent %}
+            <strong class="text-base font-bold block text-success">+ {{tx.total_cost}}</strong>
+            <p class="text-normal text-gray-300 text-s">Amount Recieved</p>
             {% else %}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-danger/50">
-              <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
-              <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z" clip-rule="evenodd" />
-            </svg>
+            <strong class="text-base font-bold block text-danger">- {{tx.total_cost}}</strong>
+            <p class="text-normal text-gray-300 text-s">Amount Spent</p>
             {% endif %}
           </div>
-          <div>
-            {% if tx.vendor %}
-            <strong class="text-base font-bold block">From {% if tx.buyer.name %}{{tx.buyer.name|title}}{% else %}{{tx.buyer.username|title}}{% endif %}</strong>
-            {% else %}
-            <strong class="text-base font-bold block">To {% if tx.vendor.name %}{{tx.vendor.name|title}}{% else %}{{tx.vendor.username|title}}{% endif %}</strong>
-            {% endif %}
-            <p class="text-normal text-gray-300 text-s">{{tx.modified|date:"M d, Y"}}</p>
-          </div>
         </div>
-        <div class="text-right">
-          {% if tx.vendor %}
-          <strong class="text-base font-bold block text-success">+ {{tx.total_cost}}</strong>
-          <p class="text-normal text-gray-300 text-s">Amount Recieved</p>
-          {% else %}
-          <strong class="text-base font-bold block text-danger">- {{tx.total_cost}}</strong>
-          <p class="text-normal text-gray-300 text-s">Amount Spent</p>
-          {% endif %}
-        </div>
+        {% if not request.user.get_user_banks and not tx.contract.payment_sent %}
+        <a href="{% url 'users:update' %}" class="bg-warning btn-rounded hover:shadow-xl duration 300 w-full py-2 text-center text-gray-700 font-bold">
+          <span class="block">REQUEST PAYMENT</span>
+        </a>
+        {% elif not tx.contract.payment_sent %}
+        <button @click="vendor_payout( '{{request.user.username}}', '{{tx.contract.withdraw_amount}}', '{{tx.contract.slug}}', '{{request.user.get_user_banks.acc_no}}', '{{request.user.get_user_banks.bank.code}}', '{{request.user.name}}', '{{tx.ref_link}}' )" class="bg-warning btn-rounded hover:shadow-xl duration 300 w-full py-2 text-center text-gray-700 font-bold">
+          <span class="block">REQUEST PAYMENT</span>
+        </button>
+        {% else %}
+        <button class="bg-success text-white btn-rounded hover:shadow-xl duration 300 w-full py-2 text-center font-bold">
+          <span class="block">PAYMENT TRANSFERRED</span>
+        </button>
+        {% endif %}
       </div>
       {% empty %}
       <div class="text-gray-600 text-sm p-2 rounded-xl text-center">No Transaction History to return yet.</div>
@@ -135,7 +150,7 @@
 
   </div>
   <div class="w-full space-y-4 md:space-y-8">
-    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Expences / Earning</span> <div class="w-2 h-2 bg-gray-700 rounded-full"></div> <span class="block">{% now 'Y' %}</span></strong> <a href="" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Expences / Earning</span> <div class="w-2 h-2 bg-gray-700 rounded-full"></div> <span class="block">{% now 'Y' %}</span></strong> </span>
     <div class="w-full btn-rounded bg-white text-gray-700 p-4 flex-none shadow-md overflow-hidden">
       <canvas class="p-0" id="user-chart" x-init="getData" x-data="ChartJs"></canvas>
     </div>

@@ -20,6 +20,7 @@ from trustcrow.escrow.views import (
     search_contracts,
     verify_transaction,
     transaction_data,
+    list_transactions,
     retry_payment,
     payment_sent,
     # complete_payment,
@@ -57,6 +58,7 @@ urlpatterns = [
 
     # transactions
     path("transaction/data/", view=transaction_data, name="transaction_data"),
+    path("transaction/list/", view=list_transactions, name="list_transactions"),
     path("transaction/verify/<str:ref>/<str:status>/", view=verify_transaction, name="verify_transaction"),
     path("transaction/retry/<str:ref_link>/", view=retry_payment, name="retry_payment"),
 
