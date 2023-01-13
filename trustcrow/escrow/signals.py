@@ -46,7 +46,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         <br>
         <br>
         Here is the credentials to login in with:
@@ -66,7 +66,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         <br>
         <br>
         Here is the credentials to login in with:
@@ -94,7 +94,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -107,7 +107,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 
@@ -123,7 +123,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -136,7 +136,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
     elif instance.completed and instance.contract_ended and not instance.contract_started:
@@ -157,7 +157,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{buyer.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{buyer.email}'])
 
@@ -170,7 +170,7 @@ def contract_post_save(sender, instance, created, **kwargs):
         <br>
         By clicking the link below you shall be taken to the contract page and required to complete your payment oand approve the contract.
         <br><br>
-        <a href="https://trustscrow.com/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
+        <a href="https://trustscrow.com/escrow/contract/detail/{instance.slug}/{vendor.username}/">Contract Link</a>
         """
         send_html_mail(subject=f"COMPLETED ESCROW CONTRACT", html_content=msg, from_email="TRUSTSCROW <noreply@trustscrow.com>", recipient_list=[f'{vendor.email}'])
 

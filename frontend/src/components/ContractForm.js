@@ -202,9 +202,10 @@ export default function ContractForm() {
                 return window.location.replace(`${window.location.origin}/users/${username}/`);
               });
         }).catch(async (error) => {
+          console.log(error);
           await iziToast.error({
             title: "[PAYOUT UNSUCCESSFUL]",
-            message: error.message
+            message: error.data.message
           });
           console.log(error);
         });

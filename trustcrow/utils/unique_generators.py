@@ -68,7 +68,7 @@ def unique_ref_generator(instance):
     This is for a Django project with a ref_link charfield
     """
     size = random.randint(15, 25)
-    new_online_uid = "TRSTC_" + random_integer_generator(size=size)
+    new_online_uid = "trstc_" + random_integer_generator(size=size)
 
     Klass = instance.__class__
     qs_exists = Klass.objects.filter(ref_link=new_online_uid).exists()
