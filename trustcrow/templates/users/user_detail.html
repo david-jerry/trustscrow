@@ -142,7 +142,7 @@
 
 
 
-    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Customers</span> </strong> <a href="" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
+    <span class="text-sm uppercase tracking-wider font-bold flex items-center justify-between"><strong class="block flex items-center space-x-2"><span class="block">Customers</span> </strong> <a href="{% url 'escrow:list_customers' %}" class="flex w-fit text-s font-bold uppercase text-primary">View All</a></span>
     <div class="w-full btn-rounded bg-white text-gray-700 p-4 shadow-md max-h-72 relative overflow-y-auto scrollbar-thin">
       {% for c in object.all_customers|slice:":6" %}
       <div class="cursor-pointer group {% if not forloop.last %}mb-3{% endif %} duration-300 flex items-center space-x-4 bg-gray-100 p-3 rounded-xl hover:shadow-md justify-between">
