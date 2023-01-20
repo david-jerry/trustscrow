@@ -1,7 +1,7 @@
 {% load humanize %}
 
 {% for c in objects %}
-{% if forloop.last and page_obj.has_next %}
+{% if objects and forloop.last and page_obj.has_next %}
 <div hx-get="{% url 'escrow:list_contracts' %}?page={{ page_obj.number|add:1 }}" hx-swap="afterend" hx-trigger="revealed" hx-target="this" class="cursor-pointer group duration-300 flex items-center space-x-4 bg-gray-100 p-3 rounded-xl hover:shadow-md justify-between">
 {% else %}
 <div class="cursor-pointer group duration-300 flex items-center space-x-4 bg-gray-100 p-3 rounded-xl hover:shadow-md justify-between">
