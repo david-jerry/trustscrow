@@ -629,7 +629,7 @@ def contract_detail2(request, *args, **kwargs):
     username = kwargs['username']
     slug = kwargs['slug']
     if request.user.is_authenticated and request.user.username == username:
-        if User.objets.filter(username=username, first_time=True).exists():
+        if User.objects.filter(username=username, first_time=True).exists():
             user = User.objects.get(username=username)
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
