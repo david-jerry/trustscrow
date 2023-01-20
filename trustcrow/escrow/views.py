@@ -507,6 +507,7 @@ class ContractList(LoginRequiredMixin, ListView):
             return Contract.objects.all()
         elif self.request.user.is_authenticated and self.request.user.is_staff and q != None:
             return Contract.objects.filter(Q(vendor__icontains=q)|Q(vendor_phone__icontains=q)|Q(vendor_email__icontains=q)|Q(buyer__icontains=q)|Q(buyer_phone__icontains=q)|Q(buyer_email__icontains=q))
+        return []
 
     def get_template_names(self):
         if not self.request.htmx:
@@ -524,7 +525,7 @@ list_contracts = ContractList.as_view()
 
 
 class CustomerList(LoginRequiredMixin, ListView):
-    model = Contract
+    model = User
     template_name = "escrow/customer_list.html"
     paginate_by = 10
     allow_empty = True
@@ -532,12 +533,12 @@ class CustomerList(LoginRequiredMixin, ListView):
     page_kwarg = 'page'
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            if user.all_customers:
-                return user.all_customers
-            return None
-        return redirect(reverse('account_login'))
+        user = self.request.user
+        LOGGER.info(user.all_customers)
+        if user.all_customers != None:
+            return user.all_customers
+        # return redirect(reverse('account_login'))
+        return []
 
 
     def get_template_names(self):
@@ -565,7 +566,9 @@ class TransactionList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             user = self.request.user
-            return user.all_transactions
+            if user.all_transactions:
+                return user.all_transactions
+            return []
         else:
             return redirect(reverse("account_login"))
 

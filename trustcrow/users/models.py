@@ -197,7 +197,6 @@ class User(AbstractUser):
                 u = User.objects.get(email = contract.buyer_email)
                 if not u in users:# and not User.objects.get(email = user.buyer_email) in users:
                     users.append(u)
-            LOGGER.info(users)
             return users
         return None
 
