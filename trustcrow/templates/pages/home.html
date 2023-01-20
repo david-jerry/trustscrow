@@ -53,17 +53,17 @@
             x-text="`Step: ${step} of 3`"></div>
           <div class="flex flex-col md:flex-row md:items-center md:justify-between">
             <div class="flex-1">
-              <div x-show="step === 1">
+              <div x-show="step === 1"  x-cloak>
                 <div class="text-lg font-bold text-gray-700 leading-tight">Escrow Type</div>
               </div>
 
               <div
-                x-show="step === 2">
+                x-show="step === 2"  x-cloak>
                 <div class="text-lg font-bold text-gray-700 leading-tight">Vendor Details</div>
               </div>
 
               <div
-                x-show="step === 3">
+                x-show="step === 3"  x-cloak>
                 <div class="text-lg font-bold text-gray-700 leading-tight">Buyer Details</div>
               </div>
 
@@ -133,7 +133,7 @@
         <!-- Bottom Navigation -->
         <div class="py-2 rounded-b-xl w-full">
           <div class="flex justify-between">
-            <button :disabled="loading" x-show="step > 1" @click="back"
+            <button :disabled="loading" x-show="step > 1" @click="back"  x-cloak
               class="btn-warning btn-rounded flex items-center space-x-3" type="button">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                 <path fill-rule="evenodd"
@@ -145,7 +145,7 @@
             </button>
 
             <button id="next"
-              x-show="step < 2" @click="next"
+              x-show="step < 2" @click="next" x-cloak
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">
                 <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"
@@ -168,7 +168,7 @@
             </button>
 
             <button id="next2"
-              x-show="step < 3 && step > 1" @click="next2"
+              x-show="step < 3 && step > 1" @click="next2" x-cloak
               class="btn-black btn-rounded flex items-center space-x-4 float-right" type="button">
               <div role="status" x-show="loading">
                 <svg aria-hidden="true" class="w-8 h-8 text-white animate-spin dark:text-gray-600 fill-warning"

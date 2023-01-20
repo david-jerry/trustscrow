@@ -53,12 +53,14 @@ class User(AbstractUser):
     ref_link = CharField(_("Referral Code"), max_length=500, blank=True, null=True)
     first_name = None  # type: ignore
     last_name = None  # type: ignore
+    temporary_password = CharField(_("Temporary Password"), blank=True, max_length=255)
 
     image = StdImageField(_("Display Photo"), upload_to="user/passport", blank=True, null=True, delete_orphans=True, variations={'thumbnail': {"width": 100, "height": 100, "crop": True}})
 
     vendor = BooleanField(_("Vendor?"), default=False)
     verified = BooleanField(_("Verified?"), default=False)
     gave_consent = BooleanField(_("Share my registration data with trustscrow's content providers for marketing purposes. This confirms you are up to the legal age approved in your country."), default=False)
+    first_time = BooleanField(default=True)
 
     def __str__(self):
         return f"{self.username.upper()} Account"
@@ -195,6 +197,7 @@ class User(AbstractUser):
                 u = User.objects.get(email = contract.buyer_email)
                 if not u in users:# and not User.objects.get(email = user.buyer_email) in users:
                     users.append(u)
+            LOGGER.info(users)
             return users
         return None
 

@@ -1,5 +1,5 @@
 <!-- vendor detail -->
-<div class="space-y-3" x-show.transition.in="step === 2">
+<div class="space-y-3" x-show.transition.in="step === 2"  x-cloak>
   <div class="relative">
     <input x-model="formData.vendor_email"
       value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}"

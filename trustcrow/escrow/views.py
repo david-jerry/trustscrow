@@ -3,6 +3,8 @@ import datetime
 from decimal import Decimal
 from pprint import pprint
 
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
 from django.db.models import Sum
 from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
@@ -41,8 +43,13 @@ from .forms import ContractForm, MilestoneForm, MilestonesFormset
 
 from trustcrow.utils.logger import LOGGER
 
-
 User = get_user_model()
+
+def redirect_after_login(request, slug, username):
+    if slug is None and username is None:
+        return redirect(settings.LOGIN_REDIRECT_URL)
+    else:
+        return redirect(reverse(f"/accounts/login/?next=/escrow/contract/detail/{slug}/{username}/"))
 
 def retry_payment(request, ref_link):
     if request.method == "GET":
@@ -325,8 +332,10 @@ class ContractCreateView(FormView):
 
             url = reverse('escrow:contract_detail', kwargs={'slug':slug})
 
-            if request.POST.get('creator') == "Contractor":
+            if request.POST.get('creator') == "Contractor" and buyer.first_time:
+                buyer.first_time = False
                 buyer.backend = 'django.contrib.auth.backends.ModelBackend'
+                buyer.save(update_fields=['first_time'])
                 login(self.request, buyer)
                 LOGGER.info(f"{slug} + ' ' + {ref} + ' ' + {pk} + ' ' + {amount} + ' ' + {email} + ' ' + {username} ")
                 return JsonResponse(
@@ -342,9 +351,24 @@ class ContractCreateView(FormView):
                         'email': email
                     },
                 )
+            elif request.POST.get('creator') == "Vendor" and vendor.first_time:
+                vendor.first_time = False
+                vendor.backend = 'django.contrib.auth.backends.ModelBackend'
+                vendor.save(update_fields=['first_time'])
+                login(self.request, vendor)
+                return JsonResponse(
+                    status=201,
+                    data={
+                        'username': username,
+                        "message": "You have successfully created a new Contract",
+                        "title": "New Contract Created",
+                        'slug': slug,
+                        'amount': amount,
+                        'email': email
+                    },
+                )
             else:
                 vendor.backend = 'django.contrib.auth.backends.ModelBackend'
-                login(self.request, vendor)
                 return JsonResponse(
                     status=201,
                     data={
@@ -510,7 +534,11 @@ class CustomerList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             user = self.request.user
-            return user.all_customers
+            if user.all_customer:
+                return user.all_customer
+            return None
+        return redirect(reverse('account_login'))
+
 
     def get_template_names(self):
         if not self.request.htmx:
@@ -565,11 +593,12 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = "slug"
 
     def get_object(self):
+        slug = self.kwargs['slug']
         LOGGER.info(Contract.objects.filter(buyer_email=self.request.user.email,slug=self.kwargs['slug']).exists())
         if Contract.objects.filter(vendor_email=self.request.user.email,slug=self.kwargs['slug']).exists() or Contract.objects.filter(buyer_email=self.request.user.email,slug=self.kwargs['slug']).exists() or self.request.user.is_superuser:
             return Contract.objects.get(slug=self.kwargs['slug'])
         else:
-            raise PermissionDenied()
+            return redirect(f"/accounts/login/?next=/escrow/contract/detail/{slug}/")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -583,11 +612,14 @@ contract_detail = ContractDetailView.as_view()
 def contract_detail2(request, *args, **kwargs):
     username = kwargs['username']
     slug = kwargs['slug']
-    user = User.objects.get(username=username)
-    user.backend = 'django.contrib.auth.backends.ModelBackend'
-    login(request, user)
-    contract = Contract.objects.get(slug=slug)
-    return redirect(reverse("escrow:contract_detail", kwargs={"slug":slug}))
+    if request.user.is_authenticated and request.user.username == username:
+        if User.objets.filter(username=username, first_time=True).exists():
+            user = User.objects.get(username=username)
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
+        return redirect(reverse("escrow:contract_detail", kwargs={"slug":slug}))
+    else:
+        return redirect(f"/accounts/login/?next=/escrow/contract/detail/{slug}/")
     # return render(request, 'escrow/detail.html', context={"object":contract})
 
 

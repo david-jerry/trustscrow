@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from config.commons import send_html_mail
+
 from .models import Profile, WalletAddress, Wallet
 
 from trustcrow.utils.unique_generators import unique_ref_generator
@@ -31,10 +33,16 @@ def create_profile(sender, instance, created, **kwargs):
         <strong>Email: </strong> <span>{instance.email}</span>
         <strong>Username: </strong> <span>{instance.username}</span>
         <br>
-        <strong>Temporary Password: </strong> <span>{instance.password}</span>
+        <strong>Temporary Password: </strong> <span>{instance.temporary_password}</span>
         <br>
         <br>
         """
+        send_html_mail(
+            subject=f"ACCOUNT CREATED SUCCESSFULLY",
+            html_content=msg,
+            from_email="TRUSTSCROW <noreply@trustscrow.com>",
+            recipient_list=[f"{instance.email}"],
+        )
 
         Profile.objects.create(user=instance)
         WalletAddress.objects.create(user=instance)
