@@ -534,8 +534,8 @@ class CustomerList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             user = self.request.user
-            if user.all_customer:
-                return user.all_customer
+            if user.all_customers:
+                return user.all_customers
             return None
         return redirect(reverse('account_login'))
 
