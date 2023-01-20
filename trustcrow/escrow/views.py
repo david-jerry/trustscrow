@@ -16,7 +16,7 @@ from config.commons import send_html_mail
 from config.mixins import LoginRequiredMixin, StaffRequiredMixin
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic import (
     DetailView,
     RedirectView,
@@ -351,6 +351,20 @@ class ContractCreateView(FormView):
                         'email': email
                     },
                 )
+            if request.POST.get('creator') == "Contractor" and not buyer.first_time:
+                return JsonResponse(
+                    status=201,
+                    data={
+                        'username': username,
+                        "message": "You have successfully created a new Contract",
+                        "title": "New Contract Created",
+                        'slug': slug,
+                        'ref': ref,
+                        'pk': pk,
+                        'amount': amount,
+                        'email': email
+                    },
+                )
             elif request.POST.get('creator') == "Vendor" and vendor.first_time:
                 vendor.first_time = False
                 vendor.backend = 'django.contrib.auth.backends.ModelBackend'
@@ -368,7 +382,6 @@ class ContractCreateView(FormView):
                     },
                 )
             else:
-                vendor.backend = 'django.contrib.auth.backends.ModelBackend'
                 return JsonResponse(
                     status=201,
                     data={
@@ -622,6 +635,7 @@ def contract_detail2(request, *args, **kwargs):
             login(request, user)
         return redirect(reverse("escrow:contract_detail", kwargs={"slug":slug}))
     else:
+        logout(request)
         return redirect(f"/accounts/login/?next=/escrow/contract/detail/{slug}/")
     # return render(request, 'escrow/detail.html', context={"object":contract})
 
