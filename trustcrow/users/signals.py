@@ -14,7 +14,7 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
+    if instance.first_time:
         msg = f"""
         Greetings {instance.name.title()}
         <br>
@@ -43,6 +43,8 @@ def create_profile(sender, instance, created, **kwargs):
             from_email="TRUSTSCROW <noreply@trustscrow.com>",
             recipient_list=[f"{instance.email}"],
         )
+        
+    if created:
 
         Profile.objects.create(user=instance)
         WalletAddress.objects.create(user=instance)
