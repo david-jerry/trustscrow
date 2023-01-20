@@ -548,9 +548,9 @@ class CustomerList(LoginRequiredMixin, ListView):
             LOGGER.info("serving from request with htmx")
             return 'snippets/htmx/escrow_customer_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     return context
 
 list_customers = CustomerList.as_view()
 
