@@ -34,67 +34,6 @@ def contract_post_save(sender, instance, created, **kwargs):
         else None
     )
 
-    if buyer.first_time:
-        msg = f"""
-        Greetings {buyer.name.title()}
-        <br>
-        <br>
-        An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
-        <br>
-        Once in please remember to update your password and bank account details first.
-        <br>
-        Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
-        <br>
-        <strong>You must be logged in to make these changes.</strong>
-        <br>
-        <br>
-        Here is the credentials to login in with:
-        <br>
-        <strong>Email: </strong> <span>{buyer.email}</span>
-        <strong>Username: </strong> <span>{buyer.username}</span>
-        <br>
-        <strong>Temporary Password: </strong> <span>{buyer.temporary_password}</span>
-        <br>
-        <br>
-        """
-        send_html_mail(
-            subject=f"ACCOUNT CREATED SUCCESSFULLY",
-            html_content=msg,
-            from_email="TRUSTSCROW <noreply@trustscrow.com>",
-            recipient_list=[f"{buyer.email}"],
-        )
-
-    if vendor.first_time:
-        msg = f"""
-        Greetings {vendor.name.title()}
-        <br>
-        <br>
-        An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
-        <br>
-        Once in please remember to update your password and bank account details first.
-        <br>
-        Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
-        <br>
-        <strong>You must be logged in to make these changes.</strong>
-        <br>
-        <br>
-        Here is the credentials to login in with:
-        <br>
-        <strong>Email: </strong> <span>{vendor.email}</span>
-        <strong>Username: </strong> <span>{vendor.username}</span>
-        <br>
-        <strong>Temporary Password: </strong> <span>{vendor.temporary_password}</span>
-        <br>
-        <br>
-        """
-        send_html_mail(
-            subject=f"ACCOUNT CREATED SUCCESSFULLY",
-            html_content=msg,
-            from_email="TRUSTSCROW <noreply@trustscrow.com>",
-            recipient_list=[f"{vendor.email}"],
-        )
-
-
     if created:
         buyer = (
             User.objects.create_user(
@@ -118,6 +57,70 @@ def contract_post_save(sender, instance, created, **kwargs):
             if not User.objects.filter(email=instance.vendor_email).exists()
             else User.objects.get(email=instance.vendor_email)
         )
+
+        if buyer.first_time:
+            msg = f"""
+            Greetings {buyer.name.title()}
+            <br>
+            <br>
+            An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
+            <br>
+            Once in please remember to update your password and bank account details first.
+            <br>
+            Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
+            <br>
+            <strong>You must be logged in to make these changes.</strong>
+            <br>
+            <br>
+            Here is the credentials to login in with:
+            <br>
+            <strong>Email: </strong> <span>{buyer.email}</span>
+            <strong>Username: </strong> <span>{buyer.username}</span>
+            <br>
+            <strong>Temporary Password: </strong> <span>{buyer.temporary_password}</span>
+            <br>
+            <br>
+            """
+            send_html_mail(
+                subject=f"ACCOUNT CREATED SUCCESSFULLY",
+                html_content=msg,
+                from_email="TRUSTSCROW <noreply@trustscrow.com>",
+                recipient_list=[f"{buyer.email}"],
+            )
+
+        if vendor.first_time:
+            msg = f"""
+            Greetings {vendor.name.title()}
+            <br>
+            <br>
+            An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
+            <br>
+            Once in please remember to update your password and bank account details first.
+            <br>
+            Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
+            <br>
+            <strong>You must be logged in to make these changes.</strong>
+            <br>
+            <br>
+            Here is the credentials to login in with:
+            <br>
+            <strong>Email: </strong> <span>{vendor.email}</span>
+            <strong>Username: </strong> <span>{vendor.username}</span>
+            <br>
+            <strong>Temporary Password: </strong> <span>{vendor.temporary_password}</span>
+            <br>
+            <br>
+            """
+            send_html_mail(
+                subject=f"ACCOUNT CREATED SUCCESSFULLY",
+                html_content=msg,
+                from_email="TRUSTSCROW <noreply@trustscrow.com>",
+                recipient_list=[f"{vendor.email}"],
+            )
+
+
+
+
         Transactions.objects.create(
             contract=instance,
             transaction_type=instance.contract_type,

@@ -14,36 +14,36 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
-    if instance.first_time:
-        msg = f"""
-        Greetings {instance.name.title()}
-        <br>
-        <br>
-        An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
-        <br>
-        Once in please remember to update your password and bank account details first.
-        <br>
-        Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
-        <br>
-        <strong>You must be logged in to make these changes.</strong>
-        <br>
-        <br>
-        Here is the credentials to login in with:
-        <br>
-        <strong>Email: </strong> <span>{instance.email}</span>
-        <strong>Username: </strong> <span>{instance.username}</span>
-        <br>
-        <strong>Temporary Password: </strong> <span>{instance.temporary_password}</span>
-        <br>
-        <br>
-        """
-        send_html_mail(
-            subject=f"ACCOUNT CREATED SUCCESSFULLY",
-            html_content=msg,
-            from_email="TRUSTSCROW <noreply@trustscrow.com>",
-            recipient_list=[f"{instance.email}"],
-        )
-        
+    # if instance.first_time:
+    #     msg = f"""
+    #     Greetings {instance.name.title()}
+    #     <br>
+    #     <br>
+    #     An account has been created on trustscrow for you with temporary password and username. Below are the credentials for this account.
+    #     <br>
+    #     Once in please remember to update your password and bank account details first.
+    #     <br>
+    #     Here is a link to update your account details: <a href="https://trustscrow.com/users/~update/">Update Bank Details</a>
+    #     <br>
+    #     <strong>You must be logged in to make these changes.</strong>
+    #     <br>
+    #     <br>
+    #     Here is the credentials to login in with:
+    #     <br>
+    #     <strong>Email: </strong> <span>{instance.email}</span>
+    #     <strong>Username: </strong> <span>{instance.username}</span>
+    #     <br>
+    #     <strong>Temporary Password: </strong> <span>{instance.temporary_password}</span>
+    #     <br>
+    #     <br>
+    #     """
+    #     send_html_mail(
+    #         subject=f"ACCOUNT CREATED SUCCESSFULLY",
+    #         html_content=msg,
+    #         from_email="TRUSTSCROW <noreply@trustscrow.com>",
+    #         recipient_list=[f"{instance.email}"],
+    #     )
+
     if created:
 
         Profile.objects.create(user=instance)
