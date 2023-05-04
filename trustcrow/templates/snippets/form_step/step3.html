@@ -1,7 +1,7 @@
-<div class="space-y-3" x-show.transition.in="step === 3" x-cloak>
+<div class="space-y-3" x-show.transition.in="step === 3" x-cloak x-init="prefilledBuyer('{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}', '{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.name}}{% endif %}', '{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.phone}}{% endif %}', '{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.address}}{% endif %}')">
   <div class="relative">
     <input x-model="formData.buyer_email"
-      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}"
+      value=""
       type="email" hx-post="{% url 'users:all' %}" required hx-trigger="keyup changed delay:1s" hx-swap="outerHTML"
       hx-target="#bresult" name="buyer_email" id="id_buyer_email"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
@@ -17,7 +17,7 @@
   </div>
   <div class="relative">
     <input x-model="formData.buyer"
-      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.name}}{% endif %}"
+      value=""
       type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer" id="id_buyer"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
       placeholder=" " />
@@ -29,7 +29,7 @@
   </div>
   <div class="relative">
     <input x-model="formData.buyer_phone"
-      value="{% if not request.user.vendor and request.user.is_authenticated %}{{request.user.profile.phone}}{% endif %}"
+      value=""
       type="text" x-on:keydown="bpop=false; vpop=false" required name="buyer_phone" id="id_buyer_phone"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
       placeholder=" " />

@@ -3887,6 +3887,8 @@ input[type="range"]::-ms-fill-lower {
   top: -0.5rem;
 }.-top-14 {
   top: -3.5rem;
+}.right-14 {
+  right: 3.5rem;
 }.bottom-4 {
   bottom: 1rem;
 }.-left-8 {
@@ -4068,8 +4070,8 @@ input[type="range"]::-ms-fill-lower {
   max-height: 100vh;
 }.max-h-\[100vh\] {
   max-height: 100vh;
-}.max-h-64 {
-  max-height: 16rem;
+}.max-h-96 {
+  max-height: 24rem;
 }.max-h-16 {
   max-height: 4rem;
 }.max-h-max {
@@ -5878,4 +5880,4 @@ input[type="range"]::-ms-fill-lower {
   }
 }
 
-/*# sourceMappingURL=app.4189671a228307496597.css.map*/
+/*# sourceMappingURL=app.f083de44e3d77afa2bbb.css.map*/

@@ -19,6 +19,7 @@ export default function ContractForm() {
     step: 1,
     formError: true,
     service: null,
+    product: null,
     formData: {
         creator: "",
         contract_title: "",
@@ -40,9 +41,22 @@ export default function ContractForm() {
         terms_for_termination: "",
     },
 
+    prefilledVendor(email, name, phone){
+      this.formData.vendor_email = email;
+      this.formData.vendor = name;
+      this.formData.vendor_phone = phone;
+    },
+
+    prefilledBuyer(email, name, phone, address){
+      this.formData.buyer_email = email;
+      this.formData.buyer = name;
+      this.formData.buyer_phone = phone;
+      this.formData.buyer_address = address;
+    },
+
     next() {
       if (this.service) {
-        if(this.formData.creator.length > 1 && this.formData.localization.length > 1 && this.formData.contract_title.length > 1 && this.formData.contract_type.length > 1 && this.formData.amount > 100){
+        if(this.formData.creator.length > 1 && this.formData.contract_title.length > 1 && this.formData.contract_type.length > 1 && this.formData.amount > 100){
           this.step++;
         }
       } else {

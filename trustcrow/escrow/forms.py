@@ -59,13 +59,13 @@ class ContractForm(forms.ModelForm):
             raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
         return data
 
-    def clean_vendor_phone(self):
-        data = self.cleaned_data['vendor_phone']
-        if data == "":
-            raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
-        if Profile.objects.filter(company_phone_I=data).exists():
-            raise ValidationError(mark_safe("This phone number is already in use buy a vendor!"))
-        return data
+    # def clean_vendor_phone(self):
+    #     data = self.cleaned_data['vendor_phone']
+    #     if data == "":
+    #         raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
+    #     if Profile.objects.filter(company_phone_I=data).exists():
+    #         raise ValidationError(mark_safe("This phone number is already in use buy a vendor!"))
+    #     return data
 
 
     def clean_vendor_email(self):
@@ -92,13 +92,13 @@ class ContractForm(forms.ModelForm):
             raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
         return data
 
-    def clean_buyer_phone(self):
-        data = self.cleaned_data['buyer_phone']
-        if data == "":
-            raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
-        if Profile.objects.filter(phone=data).exists():
-            raise ValidationError(mark_safe("This phone number is already in use buy a buyer!"))
-        return data
+    # def clean_buyer_phone(self):
+    #     data = self.cleaned_data['buyer_phone']
+    #     if data == "":
+    #         raise ValidationError(mark_safe("This is a required field. Please make a selection!"))
+    #     if Profile.objects.filter(phone=data).exists():
+    #         raise ValidationError(mark_safe("This phone number is already in use buy a buyer!"))
+    #     return data
 
 
     def clean_buyer_email(self):

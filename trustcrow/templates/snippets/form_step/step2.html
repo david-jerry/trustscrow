@@ -1,8 +1,8 @@
 <!-- vendor detail -->
-<div class="space-y-3" x-show.transition.in="step === 2"  x-cloak>
+<div class="space-y-3" x-show.transition.in="step === 2"  x-cloak x-init="prefilledVendor('{% if request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}', '{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_name}}{% endif %}', '{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_phone_I}}{% endif %})'">
   <div class="relative">
     <input x-model="formData.vendor_email"
-      value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.email}}{% endif %}"
+      value=""
       type="email" hx-post="{% url 'users:all' %}" required hx-trigger="keyup changed delay:1s" hx-swap="outerHTML"
       hx-target="#vresult" type="email" name="vendor_email" id="id_vendor_email"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
@@ -18,7 +18,7 @@
   </div>
   <div class="relative">
     <input x-model="formData.vendor"
-      value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_name}}{% endif %}"
+      value=""
       type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="vendor" id="id_vendor"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
       placeholder=" " />
@@ -28,9 +28,10 @@
       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Seller's
       Name / Company Name</label>
   </div>
+
+
   <div class="relative">
     <input x-model="formData.vendor_phone"
-      value="{% if request.user.vendor and request.user.is_authenticated %}{{request.user.profile.company_phone_I}}{% endif %}"
       type="text" x-on:keydown="bpop=false; vpop=false" required type="text" name="vendor_phone" id="id_vendor_phone"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
       placeholder=" " />

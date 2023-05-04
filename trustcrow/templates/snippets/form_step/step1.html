@@ -1,8 +1,7 @@
 <!-- type of escrow -->
 <div x-show.transition.in="step === 1" x-cloak class="space-y-4">
   <div class="mb-2">
-    <span class="text-sm font-bold mb-1 text-gray-700 block">What is your role as
-      creator?</span>
+    <span class="text-sm font-bold mb-1 text-gray-700 block">What are you initiating this transaction as?</span>
 
     <div class="flex space-x-4 mx-auto">
       <label
@@ -25,9 +24,9 @@
     </div>
     <span id="error-wrapper-creator" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
   </div>
+
   <div class="mb-2">
-    <span class="text-sm font-bold mb-1 text-gray-700 block">What do you need a contract
-      for?</span>
+    <span class="text-sm font-bold mb-1 text-gray-700 block">What are you initiating this transaction for?</span>
 
     <div class="flex space-x-4 mx-auto">
       <label @click="service = true"
@@ -58,22 +57,26 @@
     <span id="error-wrapper-amount" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
     <label for="id_vendor"
-      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Product
+      class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">(₦) Product
       / Service Amount</label>
   </div>
-  <div class="relative">
-    <input x-model="formData.localization" type="text" x-on:keydown="bpop=false; vpop=false" required type="text"
+
+
+  <div class="relative" x-cloak x-show.transition.in="formData.contract_type == 'PRODUCT'">
+    <input x-model="formData.localization" :type="!formData.contract_type == 'PRODUCT' ? 'hidden' : 'text'" x-on:keydown="bpop=false; vpop=false" required type="text"
       name="localization" id="id_localization"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"
       placeholder=" " />
     <span id="error-wrapper-localization" class="hidden bg-red-200 text-red-600 w-full p-2 text-xs mb-4"></span>
 
-    <label for="id_localization"
+    <label for="id_localization" :class="{'hidden':!formData.contract_type == 'PRODUCT', 'absolute':formData.contract_type == 'PRODUCT'}"
       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-warning peer-focus:dark:text-warning/60 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">Buyer's
       Delivery Location</label>
   </div>
 
-  <div class="relative">
+
+
+  <div class="relative" x-cloak x-show.transition.in="service">
     <input x-model="formData.contract_title" :type="!service ? 'hidden' : 'text'" x-on:keydown="bpop=false; vpop=false"
       required name="contract_title" id="id_contract_title"
       class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-warning/60 focus:outline-none focus:ring-0 focus:border-warning peer"

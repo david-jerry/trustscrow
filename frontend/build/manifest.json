@@ -1,6 +1,6 @@
 {
-  "app.css": "/static/css/app.4189671a228307496597.css",
-  "app.js": "/static/js/app.d4cdd16c.js",
+  "app.css": "/static/css/app.f083de44e3d77afa2bbb.css",
+  "app.js": "/static/js/app.b8ee9419.js",
   "app2.js": "/static/js/app2.33d3986e.js",
   "assets/android-chrome-144x144.png": "/static/assets/android-chrome-144x144.png",
   "assets/android-chrome-192x192.png": "/static/assets/android-chrome-192x192.png",
@@ -43,18 +43,18 @@
   "assets/yandex-browser-manifest.json": "/static/assets/yandex-browser-manifest.json",
   "css/13.1e3be9d05835c4664ad7.css": "/static/css/13.1e3be9d05835c4664ad7.css",
   "css/13.1e3be9d05835c4664ad7.css.map": "/static/css/13.1e3be9d05835c4664ad7.css.map",
-  "css/app.4189671a228307496597.css.map": "/static/css/app.4189671a228307496597.css.map",
+  "css/app.f083de44e3d77afa2bbb.css.map": "/static/css/app.f083de44e3d77afa2bbb.css.map",
   "entrypoints": {
     "app": {
       "assets": {
         "js": [
           "/static/js/runtime.8a8dc1e8.js",
           "/static/js/13.ec0fe475.js",
-          "/static/js/app.d4cdd16c.js"
+          "/static/js/app.b8ee9419.js"
         ],
         "css": [
           "/static/css/13.1e3be9d05835c4664ad7.css",
-          "/static/css/app.4189671a228307496597.css"
+          "/static/css/app.f083de44e3d77afa2bbb.css"
         ]
       }
     },
@@ -71,7 +71,7 @@
   "js/13.ec0fe475.js": "/static/js/13.ec0fe475.js",
   "js/13.ec0fe475.js.LICENSE.txt": "/static/js/13.ec0fe475.js.LICENSE.txt",
   "js/13.ec0fe475.js.map": "/static/js/13.ec0fe475.js.map",
-  "js/app.d4cdd16c.js.map": "/static/js/app.d4cdd16c.js.map",
+  "js/app.b8ee9419.js.map": "/static/js/app.b8ee9419.js.map",
   "js/app2.33d3986e.js.map": "/static/js/app2.33d3986e.js.map",
   "js/runtime.8a8dc1e8.js.map": "/static/js/runtime.8a8dc1e8.js.map",
   "runtime.js": "/static/js/runtime.8a8dc1e8.js",
@@ -86,7 +86,9 @@
   "vendors/images/bg.jpg": "/static/vendors/images/bg.jpg",
   "vendors/images/favicon/favicon.png": "/static/vendors/images/favicon/favicon.png",
   "vendors/images/favicon/fv.png": "/static/vendors/images/favicon/fv.png",
+  "vendors/images/home/hero1.jpeg": "/static/vendors/images/home/hero1.jpeg",
   "vendors/images/home/hero1.jpg": "/static/vendors/images/home/hero1.jpg",
+  "vendors/images/home/hero1.png": "/static/vendors/images/home/hero1.png",
   "vendors/images/home/hero2.jpg": "/static/vendors/images/home/hero2.jpg",
   "vendors/images/icons/briefcase.png": "/static/vendors/images/icons/briefcase.png",
   "vendors/images/icons/cc.png": "/static/vendors/images/icons/cc.png",
